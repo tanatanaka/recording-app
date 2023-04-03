@@ -2,6 +2,12 @@ import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import "./Top.css";
 
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+import ContentsCard from "../Tools/ContentsCard";
+
 const Top = () => {
   // タブの選択状況
   const [tab, setTab] = useState<boolean>(true);
@@ -102,25 +108,46 @@ const Top = () => {
           )}
         </div>
       </div>
+
       <div className="contents">
-        <div>
-          <h4>
-            <span>1</span>　トレーニング記録管理
-          </h4>
-          <p>画面imgを貼り付け予定</p>
-        </div>
-        <div>
-          <h4>
-            <span>2</span>　グラフで体重・体脂肪管理
-          </h4>
-          <p>画面imgを貼り付け予定</p>
-        </div>
-        <div>
-          <h4>
-            <span>3</span>　目標を設定できる
-          </h4>
-          <p>画面imgを貼り付け予定</p>
-        </div>
+        <ContentsCard
+          image={
+            "https://images.unsplash.com/photo-1616071906060-1f425a639465?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1466&q=80"
+          }
+        >
+          <Typography gutterBottom variant="h5" component="div">
+            1. トレーニング記録管理
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            コンテンツ説明
+          </Typography>
+        </ContentsCard>
+
+        <ContentsCard
+          image={
+            "https://images.unsplash.com/photo-1616071906060-1f425a639465?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1466&q=80"
+          }
+        >
+          <Typography gutterBottom variant="h5" component="div">
+            2.  体重・体脂肪管理
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            コンテンツ説明
+          </Typography>
+        </ContentsCard>
+
+        <ContentsCard
+          image={
+            "https://images.unsplash.com/photo-1616071906060-1f425a639465?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1466&q=80"
+          }
+        >
+          <Typography gutterBottom variant="h5" component="div">
+            3.  目標を登録できる
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            コンテンツ説明
+          </Typography>
+        </ContentsCard>
       </div>
     </div>
   );

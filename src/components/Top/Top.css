@@ -46,7 +46,7 @@ body {
 
 .formBox {
   width: 45%;
-  height: 100%;
+  height: 320px;
 }
 
 .tabButton {
@@ -121,20 +121,8 @@ button:disabled {
 .contents > div {
   color: rgba(44, 113, 121, 0.8);
   background-color: #fff;
-  padding: 5px 30px;
   margin-top: 100px;
-  border-radius: 10px;
-  box-sizing: border-box;
-  width: 350px;
-  height: 300px;
+  border-radius: 2px;
 }
 
-h4 {
-  font-size: 20px;
-  font-weight: 100;
-  text-align: center;
-}
 
-h4 > span {
-  font-size: 30px;
-}
