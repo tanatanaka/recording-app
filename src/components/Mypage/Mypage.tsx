@@ -42,8 +42,8 @@ const Mypage = () => {
   const handleClose = () => setOpen(false);
 
   // 目標入力フォーム
-  const [startDay, setStartDay] = useState();
-  const [goalDay, setGoalDay] = useState();
+  const [startDay, setStartDay] = useState<any>("");
+  const [goalDay, setGoalDay] = useState<any>("");
   const [goalWeight, setGoalWeight] = useState<number | null>(null);
   const [goalBodyFat, setGoalBodyFat] = useState<number | null>(null);
 
@@ -68,7 +68,7 @@ const Mypage = () => {
   };
 
   // 目標のデータ管理
-  const [goal, setGoal] = useState([]);
+  const [goal, setGoal] = useState<any>([]);
   useEffect(() => {
     const goalData = collection(db, "goals");
     const q = query(goalData);
@@ -84,33 +84,35 @@ const Mypage = () => {
     });
   }, []);
 
-  // 登録していなければ新規登録、していれば上書きする
+  // データがあれば上書き、なければ新規保存
   const handleSaveClick = (e: any) => {
     e.preventDefault();
-    console.log(goal)
-    console.log(goal[0])
-    if (!goal) {
-      addDoc(collection(db, "goals"), {
-        //   startDay,
-        //   goalDay,
-        goalWeight,
-        goalBodyFat,
-      });
-      // setStartDay(undefined);
-      // setGoalDay(undefined);
-      setGoalWeight(null);
-      setGoalBodyFat(null);
-    } else {
-      const update = async (e: any) => {
-        const updateGoals = doc(db, "goals", goal[0]);
+    if (goal) {
+      const update = async () => {
+        const updateGoals = doc(db, "goals", goal[0] && goal[0].id);
         await updateDoc(updateGoals, {
-          // startDay,
-          // goalDay,
+          startDay,
+          goalDay,
           goalWeight,
           goalBodyFat,
         });
       };
+      update();
+    } else {
+      const createGoals = async () => {
+        await addDoc(collection(db, "goals"), {
+          startDay,
+          goalDay,
+          goalWeight,
+          goalBodyFat,
+        });
+      };
+      createGoals();
     }
+    setStartDay("");
+    setGoalDay("");
+    setGoalWeight(null);
+    setGoalBodyFat(null);
     handleClose();
   };
 

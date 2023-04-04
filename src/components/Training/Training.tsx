@@ -80,10 +80,14 @@ const Training = () => {
   // 編集画面を開くかどうかのstate
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  // 編集用のtodoとしてセットするstate
+  // 編集用のtrainingとしてセットするstate
   const [editTraining, setEditTraining] = useState<any>({});
 
-
+  // 編集フォームを開きtodosから該当するtodoを取得
+  const handleEditClick = (t: any) => {
+    setIsEdit(true);
+    setEditTraining({...t});
+  }
 
   return (
     <>
@@ -133,7 +137,7 @@ const Training = () => {
                 <ExpandMoreIcon />
               </button>
               <span>{t.date}</span>
-              <button>
+              <button onClick={() => handleEditClick(t)}>
                 <EditIcon />
               </button>
               <button onClick={() => handleDeleteClick(t.id)}>
