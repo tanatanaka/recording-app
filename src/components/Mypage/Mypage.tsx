@@ -44,7 +44,13 @@ const Mypage = () => {
   // Modalの開閉
   const [open, setOpen] = useState<boolean>(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setStartDay("");
+    setGoalDay("");
+    setGoalWeight(null);
+    setGoalBodyFat(null);
+    setOpen(false)
+  };
 
   // 目標入力フォーム
   const [startDay, setStartDay] = useState<any>("");
@@ -90,34 +96,25 @@ const Mypage = () => {
   }, []);
 
   // データがあれば上書き、なければ新規保存
-  const handleSaveClick =  (e: any) => {
+  const handleSaveClick = async (e: any) => {
     e.preventDefault();  
-    if (goal) {
-      const update = async () => {
-        const updateGoals = doc(db, "goals", goal && goal.id);
-        await updateDoc(updateGoals, {
-          startDay,
-          goalDay,
-          goalWeight,
-          goalBodyFat,
-        });
-      };
-      update();
-    } else {
-      const createGoals = async () => {
-        await addDoc(collection(db, "goals"), {
-          startDay,
-          goalDay,
-          goalWeight,
-          goalBodyFat,
-        });
-      };
-      createGoals();
-    }
-    setStartDay("");
-    setGoalDay("");
-    setGoalWeight(null);
-    setGoalBodyFat(null);
+    const updateGoals = doc(db, "goals", goal && goal.id);
+    await updateDoc(updateGoals, {
+      startDay,
+      goalDay,
+      goalWeight,
+      goalBodyFat,
+    });
+    handleClose();
+  };
+
+  const handleCreateClick = async () => {
+    await addDoc(collection(db, "goals"), {
+      startDay,
+      goalDay,
+      goalWeight,
+      goalBodyFat,
+    });
     handleClose();
   };
 
@@ -156,7 +153,7 @@ const Mypage = () => {
               label="トレーニング開始日"
               value={startDay}
               onChange={startDayChange}
-              renderInput={(params: any) => <TextField {...params} />}
+              // renderInput={(params: any) => <TextField {...params} />}
             />
           </LocalizationProvider>
               {/* <TextField
@@ -185,7 +182,12 @@ const Mypage = () => {
               />
             </Box>
             <p>※既存の目標は上書きされます</p>
-            <BasicButton onClick={handleSaveClick}>保存</BasicButton>
+            {goal ? (
+              <BasicButton onClick={handleSaveClick}>目標を上書き保存</BasicButton>
+            ) : (
+              <BasicButton onClick={handleCreateClick}>目標を新規作成</BasicButton>
+            )}
+            
           </Box>
         </Modal>
 

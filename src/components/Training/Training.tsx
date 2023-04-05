@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Training.css";
 import Menu from "../Menu/Menu";
 
@@ -6,88 +6,205 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BasicButton from "../Tools/BasicButton";
+
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 800,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  border: "1px solid rgba(47, 132, 141, 0.8)",
   boxShadow: 24,
   p: 4,
   textAlign: "center",
 };
 
 const Training = () => {
-  // 入力したtrainingのstate
+
+  // firebaseから取得したtrainingのstate
   const [training, setTraining] = useState<any>([]);
+  useEffect(() => {
+    const trainingData = collection(db, "training");
+    const q = query(trainingData);
+    onSnapshot(q, (snapshot: any) => {
+      setTraining(
+        snapshot.docs.map((doc: any) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          };
+        })
+      );
+    });  
+  }, []);
 
   // Modalの開閉
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpen = () => setOpenModal(true);
+  const handleClose = () => {
+    setDay("");
+    setName("");
+    setTime("");
+    setCount("");
+    setOpenModal(false);
+  };
 
   // トレーニング入力フォーム
-  const [day, setDay] = useState();
-  const [menu, setMenu] = useState<string>("");
+  const [day, setDay] = useState("");
+  const [name, setName] = useState<string>("");
+  const [time, setTime] = useState<string>("");
+  const [count, setCount] = useState<string>("");
+  // 項目ごとのオブジェクトを要素に持つ配列を作成
+  const [menu, setMenu] = useState<any>([]);
 
   const dayChange = (e: any) => {
     e.preventDefault();
     setDay(e.target.value);
   };
 
-  const menuChange = (e: any) => {
+  const nameChange = (e: any) => {
     e.preventDefault();
-    setMenu(e.target.value);
+    setName(e.target.value);
   };
 
+  const timeChange = (e: any) => {
+    e.preventDefault();
+    setTime(e.target.value);
+  };
+
+  const countChange = (e: any) => {
+    e.preventDefault();
+    setCount(e.target.value);
+  };
+
+  // 非同期処理にすると上手くいかない
   const handleSaveClick = () => {
-    setTraining([
-      ...training,
+    setMenu([
+      ...menu,
       {
-        id: training.length + 1,
-        date: day,
-        menu: menu,
+        name,
+        time,
+        count,
       },
     ]);
-    setMenu("");
+    addDoc(collection(db, "training"), {
+      day,
+      menu,
+    });
     handleClose();
   };
 
-  // トレーニング詳細の開閉state
-  const [detail, setDetail] = useState(false);
-
-  const detailChange = () => {
-    setDetail(!detail);
+  
+  
+  
+  // テーブル
+  const createData = (date: string) => {
+    // trainingをmapで処理すれば上手くいく？
+    return {
+      date,
+      history: [
+        {
+          name: "ランニング",
+          time: 40,
+          count: null,
+        },
+        {
+          name: "ランニング",
+          time: 40,
+          count: null,
+        },
+      ],
+    };
   };
 
-  // 削除ボタン
-  const handleDeleteClick = (id: any) => {
-    const newTraining = training.filter((t: any) => {
-      return t.id !== id
-    })
-    setTraining(newTraining);
-  }
+  const Row = (props: { row: ReturnType<typeof createData> }) => {
+    const { row } = props;
+    const [open, setOpen] = React.useState(false);
 
-  // 編集ボタンを押したとき
-  // 編集画面を開くかどうかのstate
-  const [isEdit, setIsEdit] = useState<boolean>(false);
+    return (
+      <React.Fragment>
+        <TableRow
+          sx={{
+            "& > *": { borderBottom: "unset", fontSize: "18px", float: "left" },
+          }}
+        >
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {row.date}
+          </TableCell>
 
-  // 編集用のtrainingとしてセットするstate
-  const [editTraining, setEditTraining] = useState<any>({});
+          {/* 右端表示、borderBottom消せない、引数指定分からない */}
+          <TableCell align="right">
+            <EditIcon />
+          </TableCell>
+          <TableCell align="right">
+            <DeleteIcon />
+          </TableCell>
+        </TableRow>
 
-  // 編集フォームを開きtodosから該当するtodoを取得
-  const handleEditClick = (t: any) => {
-    setIsEdit(true);
-    setEditTraining({...t});
-  }
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 1 }}>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Menu</TableCell>
+                      <TableCell>Time</TableCell>
+                      <TableCell>Count</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {row.history.map((historyRow) => (
+                      <TableRow key={historyRow.name}>
+                        <TableCell component="th" scope="row">
+                          {historyRow.name}
+                        </TableCell>
+                        <TableCell>{historyRow.time}</TableCell>
+                        <TableCell>{historyRow.count}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+  };
+
+  // trainingから日付だけ取り出す処理をすればいい？
+  const rows = [createData("2023/4/1"),];
+
+
+
 
   return (
     <>
@@ -97,8 +214,26 @@ const Training = () => {
         <div className="button">
           <BasicButton onClick={handleOpen}>トレーニングを入力</BasicButton>
         </div>
+
+        {/* テーブル */}
+        <TableContainer component={Paper}>
+          <Table aria-label="collapsible table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Training List</TableCell>
+                <TableCell />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <Row key={row.date} row={row} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
         <Modal
-          open={open}
+          open={openModal}
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
@@ -110,30 +245,46 @@ const Training = () => {
             <Box
               component="form"
               sx={{
-                "& > :not(style)": { m: 2, width: "265px" },
+                "& > :not(style)": { m: 1, textAlign: "left" },
               }}
             >
               <TextField
-                label="トレーニングをした日"
+                sx={{ "& > :not(style)": { width: "180px" } }}
+                label="トレーニング日"
                 variant="outlined"
                 type="date"
                 onChange={dayChange}
               />
               <TextField
+                sx={{ "& > :not(style)": { width: "300px" } }}
                 label="メニュー"
                 variant="outlined"
                 type="text"
-                onChange={menuChange}
+                onChange={nameChange}
+              />
+              <TextField
+                sx={{ "& > :not(style)": { width: "110px" } }}
+                label="時間(分)"
+                variant="outlined"
+                type="number"
+                onChange={timeChange}
+              />
+              <TextField
+                sx={{ "& > :not(style)": { width: "90px" } }}
+                label="回数"
+                variant="outlined"
+                type="number"
+                onChange={countChange}
               />
             </Box>
-            <Button onClick={handleSaveClick}>保存</Button>
+            <BasicButton onClick={handleSaveClick}>保存</BasicButton>
           </Box>
         </Modal>
 
-        {training.map((t: any) => (
+        {/* {training.map((t: any) => (
           <div className="trainingList">
             <li key={t.id}>
-              <button onClick={detailChange}>
+              <button>
                 <ExpandMoreIcon />
               </button>
               <span>{t.date}</span>
@@ -151,7 +302,7 @@ const Training = () => {
               )}
             </li>
           </div>
-        ))}
+        ))} */}
       </div>
     </>
   );
