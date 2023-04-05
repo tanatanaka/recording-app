@@ -3,6 +3,11 @@ import BasicButton from "../Tools/BasicButton";
 import Menu from "../Menu/Menu";
 import "./Mypage.css";
 
+import { Dayjs } from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import { auth, db } from "../../firebase";
 import {
   addDoc,
@@ -16,11 +21,11 @@ import {
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
+
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 
 const style = {
   position: "absolute" as "absolute",
@@ -68,28 +73,28 @@ const Mypage = () => {
   };
 
   // 目標のデータ管理
-  const [goal, setGoal] = useState<any>([]);
+  const [goal, setGoal] = useState<any>(undefined);
+
   useEffect(() => {
     const goalData = collection(db, "goals");
     const q = query(goalData);
     onSnapshot(q, (snapshot: any) => {
-      setGoal(
-        snapshot.docs.map((doc: any) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
-        })
-      );
+      const getGoal = snapshot.docs.map((doc: any) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      })
+      setGoal(getGoal && getGoal[0]);
     });
   }, []);
 
   // データがあれば上書き、なければ新規保存
-  const handleSaveClick = (e: any) => {
-    e.preventDefault();
+  const handleSaveClick =  (e: any) => {
+    e.preventDefault();  
     if (goal) {
       const update = async () => {
-        const updateGoals = doc(db, "goals", goal[0] && goal[0].id);
+        const updateGoals = doc(db, "goals", goal && goal.id);
         await updateDoc(updateGoals, {
           startDay,
           goalDay,
@@ -116,6 +121,7 @@ const Mypage = () => {
     handleClose();
   };
 
+  // ログアウト
   const navigate = useNavigate();
   const handleLogout = () => {
     signOut(auth);
@@ -145,13 +151,20 @@ const Mypage = () => {
               sx={{
                 "& > :not(style)": { m: 2, width: "265px" },
               }}
-            >
-              <TextField
+            ><LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="トレーニング開始日"
+              value={startDay}
+              onChange={startDayChange}
+              renderInput={(params: any) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+              {/* <TextField
                 label="トレーニング開始日"
                 variant="outlined"
                 type="date"
                 onChange={startDayChange}
-              />
+              /> */}
               <TextField
                 label="目標終了日"
                 variant="outlined"
@@ -171,12 +184,10 @@ const Mypage = () => {
                 onChange={goalBodyFatChange}
               />
             </Box>
+            <p>※既存の目標は上書きされます</p>
             <BasicButton onClick={handleSaveClick}>保存</BasicButton>
           </Box>
         </Modal>
-
-        {/* Modal内に表示させたいもの */}
-        {/* トレーニング開始日 */}
 
         <div className="flexBox">
           {/* 目標 */}
@@ -184,19 +195,19 @@ const Mypage = () => {
             <dl>
               <div className="goals">
                 <dt>トレーニングを始めた日</dt>
-                <dd>{startDay}</dd>
+                <dd>{goal && goal.startDay}</dd>
               </div>
               <div className="goals">
                 <dt>目標達成したい日</dt>
-                <dd>{goalDay}</dd>
+                <dd>{goal && goal.goalDay}</dd>
               </div>
               <div className="goals">
                 <dt>目標体重</dt>
-                <dd>{goalWeight}kg</dd>
+                <dd>{goal && goal.goalWeight}kg</dd>
               </div>
               <div className="goals">
                 <dt>目標体脂肪率</dt>
-                <dd>{goalBodyFat}%</dd>
+                <dd>{goal && goal.goalBodyFat}%</dd>
               </div>
             </dl>
           </div>
