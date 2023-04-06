@@ -36,12 +36,12 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 800,
+  width: 520,
   bgcolor: "background.paper",
   border: "1px solid rgba(47, 132, 141, 0.8)",
   boxShadow: 24,
-  p: 4,
-  textAlign: "center",
+  padding: 4,
+  textAlign: "center"
 };
 
 const Training = () => {
@@ -116,24 +116,12 @@ const Training = () => {
     handleClose();
   };
 
-  // テーブル
-  const createData = (date: string) => {
-    return {
-      date,
-      history: [
-        {
-          name: "ランニング",
-          time: 40,
-          count: null,
-        },
-        {
-          name: "ランニング",
-          time: 40,
-          count: null,
-        },
-      ],
-    };
+  // トレーニング削除
+  const handleDeleteClick = async (id: string) => {
+    await deleteDoc(doc(db, "training", id));
   };
+
+
 
   const Row = (props: { row: any }) => {
     const { row } = props;
@@ -141,40 +129,30 @@ const Training = () => {
 
     return (
       <React.Fragment>
-        <div className="tableFlex">
-          <TableRow
-            sx={{
-              "& > *": { borderBottom: "none", fontSize: "18px" },
-            }}
-          >
-            <TableCell>
-              <IconButton
-                aria-label="expand row"
-                size="small"
-                onClick={() => setOpen(!open)}
-              >
-                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-              </IconButton>
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {row.day}
-            </TableCell>
-          </TableRow>
-
-          {/* 右端表示、引数指定分からない */}
-          <TableRow
-            sx={{
-              "& > *": { borderBottom: "none", fontSize: "18px" },
-            }}
-          >
-            <TableCell>
-              <EditIcon />
-            </TableCell>
-            <TableCell>
-              <DeleteIcon />
-            </TableCell>
-          </TableRow>
-        </div>
+        <TableRow
+          sx={{
+            "& > *": { borderBottom: "none", fontSize: "17px" },
+          }}
+        >
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {row.day}
+          </TableCell>
+          <TableCell>
+            <EditIcon />
+          </TableCell>
+          <TableCell onClick={() => handleDeleteClick(row.id)}>
+            <DeleteIcon />
+          </TableCell>
+        </TableRow>
 
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -208,9 +186,6 @@ const Training = () => {
     );
   };
 
-  // trainingから日付だけ取り出す処理をすればいい？
-  const rows = [createData("2023/4/1")];
-
   return (
     <>
       <Menu />
@@ -221,13 +196,18 @@ const Training = () => {
         </div>
 
         {/* テーブル */}
-        <TableContainer component={Paper}>
+        <TableContainer
+          component={Paper}
+          sx={{ width: "90%", margin: "0 auto" }}
+        >
           <Table aria-label="collapsible table">
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontSize: "18px", letterSpacing: "1.5px" }}>
                   Training List
                 </TableCell>
+                <TableCell />
+                <TableCell />
                 <TableCell />
               </TableRow>
             </TableHead>
@@ -239,7 +219,7 @@ const Training = () => {
           </Table>
         </TableContainer>
 
-        {/* モーダルウィンドウ */}
+        {/* 登録用モーダルウィンドウ */}
         <Modal
           open={openModal}
           onClose={handleClose}
@@ -253,37 +233,89 @@ const Training = () => {
             <Box
               component="form"
               sx={{
-                "& > :not(style)": { m: 1, textAlign: "left" },
+                "& > :not(style)": { m: 1, textAlign: "left", },
               }}
             >
-              <TextField
-                sx={{ width: "180px" }}
-                label="トレーニング日"
-                variant="outlined"
-                type="date"
-                onChange={dayChange}
-              />
-              <TextField
-                sx={{ width: "300px" }}
-                label="メニュー"
-                variant="outlined"
-                type="text"
-                onChange={nameChange}
-              />
-              <TextField
-                sx={{ width: "110px" }}
-                label="時間(分)"
-                variant="outlined"
-                type="number"
-                onChange={timeChange}
-              />
-              <TextField
-                sx={{ width: "90px" }}
-                label="回数"
-                variant="outlined"
-                type="number"
-                onChange={countChange}
-              />
+              <Box>
+                <TextField
+                  sx={{ width: "180px", marginTop: "20px" }}
+                  label="トレーニング日"
+                  variant="outlined"
+                  type="date"
+                  onChange={dayChange}
+                />
+              </Box>
+              <Box sx={{display: "flex", flexDirection: "column"}}>
+                <Box>
+                  <TextField
+                    sx={{ width: "300px" }}
+                    label="メニュー"
+                    variant="outlined"
+                    type="text"
+                    onChange={nameChange}
+                  />
+                  <TextField
+                    sx={{ width: "110px" }}
+                    label="時間(分)"
+                    variant="outlined"
+                    type="number"
+                    onChange={timeChange}
+                  />
+                  <TextField
+                    sx={{ width: "90px" }}
+                    label="回数"
+                    variant="outlined"
+                    type="number"
+                    onChange={countChange}
+                  />
+                </Box>
+                <Box>
+                  <TextField
+                    sx={{ width: "300px" }}
+                    label="メニュー"
+                    variant="outlined"
+                    type="text"
+                    onChange={nameChange}
+                  />
+                  <TextField
+                    sx={{ width: "110px" }}
+                    label="時間(分)"
+                    variant="outlined"
+                    type="number"
+                    onChange={timeChange}
+                  />
+                  <TextField
+                    sx={{ width: "90px" }}
+                    label="回数"
+                    variant="outlined"
+                    type="number"
+                    onChange={countChange}
+                  />
+                </Box>
+                <Box>
+                  <TextField
+                    sx={{ width: "300px" }}
+                    label="メニュー"
+                    variant="outlined"
+                    type="text"
+                    onChange={nameChange}
+                  />
+                  <TextField
+                    sx={{ width: "110px" }}
+                    label="時間(分)"
+                    variant="outlined"
+                    type="number"
+                    onChange={timeChange}
+                  />
+                  <TextField
+                    sx={{ width: "90px", marginBottom: "20px" }}
+                    label="回数"
+                    variant="outlined"
+                    type="number"
+                    onChange={countChange}
+                  />
+                </Box>
+              </Box>
             </Box>
             <BasicButton onClick={handleSaveClick}>保存</BasicButton>
           </Box>
