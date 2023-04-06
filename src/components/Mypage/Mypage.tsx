@@ -58,7 +58,7 @@ const Mypage = () => {
   const [goalBodyFat, setGoalBodyFat] = useState<number | null>(null);
 
   const startDayChange = (e: Dayjs | null) => {
-    e !== null && setStartDay(e);
+    setStartDay(e);
     // 試しにコンソール出力
     console.log(typeof startDay)
     console.log(startDay)

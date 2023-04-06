@@ -31,7 +31,6 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
-
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -46,67 +45,6 @@ const style = {
 };
 
 const Training = () => {
-
-  // Modalの開閉
-  const [openModal, setOpenModal] = useState(false);
-  const handleOpen = () => setOpenModal(true);
-  const handleClose = () => {
-    setDay("");
-    setName("");
-    setTime("");
-    setCount("");
-    setOpenModal(false);
-  };
-
-  // トレーニング入力フォーム
-  const [day, setDay] = useState("");
-  const [name, setName] = useState<string>("");
-  const [time, setTime] = useState<string>("");
-  const [count, setCount] = useState<string>("");
-  // 項目ごとのオブジェクトを要素に持つ配列を作成
-  const [menu, setMenu] = useState<any>([]);
-
-  const dayChange = (e: any) => {
-    e.preventDefault();
-    setDay(e.target.value);
-    console.log(day)
-  };
-
-  const nameChange = (e: any) => {
-    e.preventDefault();
-    setName(e.target.value);
-    console.log(name)
-  };
-
-  const timeChange = (e: any) => {
-    e.preventDefault();
-    setTime(e.target.value);
-    console.log(time)
-  };
-
-  const countChange = (e: any) => {
-    e.preventDefault();
-    setCount(e.target.value);
-    console.log(count)
-  };
-
-  // 非同期処理にすると上手くいかない
-  const handleSaveClick = () => {
-    setMenu(
-      {
-        name,
-        time,
-        count,
-      },
-    );
-    console.log(menu)
-    addDoc(collection(db, "training"), {
-      day,
-      menu,
-    });
-    handleClose();
-  };
-
   // firebaseから取得したtrainingのstate
   const [training, setTraining] = useState<any>([]);
   useEffect(() => {
@@ -124,9 +62,62 @@ const Training = () => {
     });
   }, []);
 
+  // Modalの開閉
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpen = () => setOpenModal(true);
+  const handleClose = () => {
+    setDay(null);
+    setName("");
+    setTime(null);
+    setCount(null);
+    setOpenModal(false);
+  };
+
+  // トレーニング入力フォーム
+  const [day, setDay] = useState<any>(null);
+  const [name, setName] = useState<string>("");
+  const [time, setTime] = useState<number | null>(null);
+  const [count, setCount] = useState<number | null>(null);
+  // 項目ごとのオブジェクトを要素に持つ配列を作成
+  const [menu, setMenu] = useState<any>([]);
+
+  const dayChange = (e: any) => {
+    e.preventDefault();
+    setDay(e.target.value);
+  };
+
+  const nameChange = (e: any) => {
+    e.preventDefault();
+    setName(e.target.value);
+  };
+
+  const timeChange = (e: any) => {
+    e.preventDefault();
+    setTime(e.target.value);
+  };
+
+  const countChange = (e: any) => {
+    e.preventDefault();
+    setCount(e.target.value);
+  };
+
+  const handleSaveClick = async () => {
+    await addDoc(collection(db, "training"), {
+      day,
+      menu: [
+        ...menu,
+        {
+          name,
+          time,
+          count,
+        },
+      ],
+    });
+    handleClose();
+  };
+
   // テーブル
   const createData = (date: string) => {
-    // trainingをmapで処理すれば上手くいく？
     return {
       date,
       history: [
@@ -144,38 +135,46 @@ const Training = () => {
     };
   };
 
-  const Row = (props: { row: ReturnType<typeof createData> }) => {
+  const Row = (props: { row: any }) => {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
 
     return (
       <React.Fragment>
-        <TableRow
-          sx={{
-            "& > *": { borderBottom: "unset", fontSize: "18px", float: "left" },
-          }}
-        >
-          <TableCell>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {row.date}
-          </TableCell>
+        <div className="tableFlex">
+          <TableRow
+            sx={{
+              "& > *": { borderBottom: "none", fontSize: "18px" },
+            }}
+          >
+            <TableCell>
+              <IconButton
+                aria-label="expand row"
+                size="small"
+                onClick={() => setOpen(!open)}
+              >
+                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              </IconButton>
+            </TableCell>
+            <TableCell component="th" scope="row">
+              {row.day}
+            </TableCell>
+          </TableRow>
 
-          {/* 右端表示、borderBottom消せない、引数指定分からない */}
-          <TableCell align="right">
-            <EditIcon />
-          </TableCell>
-          <TableCell align="right">
-            <DeleteIcon />
-          </TableCell>
-        </TableRow>
+          {/* 右端表示、引数指定分からない */}
+          <TableRow
+            sx={{
+              "& > *": { borderBottom: "none", fontSize: "18px" },
+            }}
+          >
+            <TableCell>
+              <EditIcon />
+            </TableCell>
+            <TableCell>
+              <DeleteIcon />
+            </TableCell>
+          </TableRow>
+        </div>
 
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -190,7 +189,7 @@ const Training = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.history.map((historyRow) => (
+                    {row.menu.map((historyRow: any) => (
                       <TableRow key={historyRow.name}>
                         <TableCell component="th" scope="row">
                           {historyRow.name}
@@ -226,18 +225,21 @@ const Training = () => {
           <Table aria-label="collapsible table">
             <TableHead>
               <TableRow>
-                <TableCell>Training List</TableCell>
+                <TableCell sx={{ fontSize: "18px", letterSpacing: "1.5px" }}>
+                  Training List
+                </TableCell>
                 <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <Row key={row.date} row={row} />
+              {training.map((row: any) => (
+                <Row key={row.day} row={row} />
               ))}
             </TableBody>
           </Table>
         </TableContainer>
 
+        {/* モーダルウィンドウ */}
         <Modal
           open={openModal}
           onClose={handleClose}
@@ -255,28 +257,28 @@ const Training = () => {
               }}
             >
               <TextField
-                sx={{ "& > :not(style)": { width: "180px" } }}
+                sx={{ width: "180px" }}
                 label="トレーニング日"
                 variant="outlined"
                 type="date"
                 onChange={dayChange}
               />
               <TextField
-                sx={{ "& > :not(style)": { width: "300px" } }}
+                sx={{ width: "300px" }}
                 label="メニュー"
                 variant="outlined"
                 type="text"
                 onChange={nameChange}
               />
               <TextField
-                sx={{ "& > :not(style)": { width: "110px" } }}
+                sx={{ width: "110px" }}
                 label="時間(分)"
                 variant="outlined"
                 type="number"
                 onChange={timeChange}
               />
               <TextField
-                sx={{ "& > :not(style)": { width: "90px" } }}
+                sx={{ width: "90px" }}
                 label="回数"
                 variant="outlined"
                 type="number"
@@ -286,29 +288,6 @@ const Training = () => {
             <BasicButton onClick={handleSaveClick}>保存</BasicButton>
           </Box>
         </Modal>
-
-        {/* {training.map((t: any) => (
-          <div className="trainingList">
-            <li key={t.id}>
-              <button>
-                <ExpandMoreIcon />
-              </button>
-              <span>{t.date}</span>
-              <button onClick={() => handleEditClick(t)}>
-                <EditIcon />
-              </button>
-              <button onClick={() => handleDeleteClick(t.id)}>
-                <DeleteIcon />
-              </button>
-
-              {detail && (
-                <div className="detailList">
-                  <li key={t.date}>{t.menu}</li>
-                </div>
-              )}
-            </li>
-          </div>
-        ))} */}
       </div>
     </>
   );

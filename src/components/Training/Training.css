@@ -21,6 +21,11 @@
   margin-bottom: 40px;
 }
 
+.tableFlex{
+  display: flex;
+  justify-content: space-between;
+}
+
 .trainingList {
   background-color: rgba(67, 113, 124, 0.295);
   width: 500px;
