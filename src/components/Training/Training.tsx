@@ -3,8 +3,8 @@ import "./Training.css";
 import Menu from "../Menu/Menu";
 
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,8 +21,16 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
 import { db } from "../../firebase";
+
 
 const style = {
   position: "absolute" as "absolute",
@@ -38,23 +46,6 @@ const style = {
 };
 
 const Training = () => {
-
-  // firebaseから取得したtrainingのstate
-  const [training, setTraining] = useState<any>([]);
-  useEffect(() => {
-    const trainingData = collection(db, "training");
-    const q = query(trainingData);
-    onSnapshot(q, (snapshot: any) => {
-      setTraining(
-        snapshot.docs.map((doc: any) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
-        })
-      );
-    });  
-  }, []);
 
   // Modalの開閉
   const [openModal, setOpenModal] = useState(false);
@@ -78,33 +69,37 @@ const Training = () => {
   const dayChange = (e: any) => {
     e.preventDefault();
     setDay(e.target.value);
+    console.log(day)
   };
 
   const nameChange = (e: any) => {
     e.preventDefault();
     setName(e.target.value);
+    console.log(name)
   };
 
   const timeChange = (e: any) => {
     e.preventDefault();
     setTime(e.target.value);
+    console.log(time)
   };
 
   const countChange = (e: any) => {
     e.preventDefault();
     setCount(e.target.value);
+    console.log(count)
   };
 
   // 非同期処理にすると上手くいかない
   const handleSaveClick = () => {
-    setMenu([
-      ...menu,
+    setMenu(
       {
         name,
         time,
         count,
       },
-    ]);
+    );
+    console.log(menu)
     addDoc(collection(db, "training"), {
       day,
       menu,
@@ -112,9 +107,23 @@ const Training = () => {
     handleClose();
   };
 
-  
-  
-  
+  // firebaseから取得したtrainingのstate
+  const [training, setTraining] = useState<any>([]);
+  useEffect(() => {
+    const trainingData = collection(db, "training");
+    const q = query(trainingData);
+    onSnapshot(q, (snapshot: any) => {
+      setTraining(
+        snapshot.docs.map((doc: any) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          };
+        })
+      );
+    });
+  }, []);
+
   // テーブル
   const createData = (date: string) => {
     // trainingをmapで処理すれば上手くいく？
@@ -201,10 +210,7 @@ const Training = () => {
   };
 
   // trainingから日付だけ取り出す処理をすればいい？
-  const rows = [createData("2023/4/1"),];
-
-
-
+  const rows = [createData("2023/4/1")];
 
   return (
     <>

@@ -3,10 +3,10 @@ import BasicButton from "../Tools/BasicButton";
 import Menu from "../Menu/Menu";
 import "./Mypage.css";
 
-import { Dayjs } from 'dayjs';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Dayjs } from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { auth, db } from "../../firebase";
 import {
@@ -20,7 +20,6 @@ import {
 } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -45,27 +44,28 @@ const Mypage = () => {
   const [open, setOpen] = useState<boolean>(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    setStartDay("");
-    setGoalDay("");
+    setStartDay(null);
+    setGoalDay(null);
     setGoalWeight(null);
     setGoalBodyFat(null);
-    setOpen(false)
+    setOpen(false);
   };
 
   // 目標入力フォーム
-  const [startDay, setStartDay] = useState<any>("");
-  const [goalDay, setGoalDay] = useState<any>("");
+  const [startDay, setStartDay] = useState<Dayjs | null>(null);
+  const [goalDay, setGoalDay] = useState<Dayjs | null>(null);
   const [goalWeight, setGoalWeight] = useState<number | null>(null);
   const [goalBodyFat, setGoalBodyFat] = useState<number | null>(null);
 
-  const startDayChange = (e: any) => {
-    e.preventDefault();
-    setStartDay(e.target.value);
+  const startDayChange = (e: Dayjs | null) => {
+    e !== null && setStartDay(e);
+    // 試しにコンソール出力
+    console.log(typeof startDay)
+    console.log(startDay)
   };
 
   const goalDayChange = (e: any) => {
-    e.preventDefault();
-    setGoalDay(e.target.value);
+    setGoalDay(e);
   };
 
   const goalWeightChange = (e: any) => {
@@ -90,14 +90,14 @@ const Mypage = () => {
           id: doc.id,
           ...doc.data(),
         };
-      })
+      });
       setGoal(getGoal && getGoal[0]);
     });
   }, []);
 
   // データがあれば上書き、なければ新規保存
   const handleSaveClick = async (e: any) => {
-    e.preventDefault();  
+    e.preventDefault();
     const updateGoals = doc(db, "goals", goal && goal.id);
     await updateDoc(updateGoals, {
       startDay,
@@ -148,26 +148,26 @@ const Mypage = () => {
               sx={{
                 "& > :not(style)": { m: 2, width: "265px" },
               }}
-            ><LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="トレーニング開始日"
-              value={startDay}
-              onChange={startDayChange}
-              // renderInput={(params: any) => <TextField {...params} />}
-            />
-          </LocalizationProvider>
-              {/* <TextField
-                label="トレーニング開始日"
-                variant="outlined"
-                type="date"
-                onChange={startDayChange}
-              /> */}
-              <TextField
-                label="目標終了日"
-                variant="outlined"
-                type="date"
-                onChange={goalDayChange}
-              />
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthAndYear: 'YYYY年 MM月' }}>
+                <DatePicker
+                  label="トレーニング開始日"
+                  inputFormat="YYYY/MM/DD"
+                  value={startDay}
+                  onChange={startDayChange}
+                  renderInput={(params: any) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+              <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthAndYear: 'YYYY年 MM月' }}>
+                <DatePicker
+                  label="終了目標日"
+                  inputFormat="YYYY/MM/DD"
+                  value={goalDay}
+                  onChange={goalDayChange}
+                  renderInput={(params: any) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+
               <TextField
                 label="目標体重"
                 variant="outlined"
@@ -183,11 +183,14 @@ const Mypage = () => {
             </Box>
             <p>※既存の目標は上書きされます</p>
             {goal ? (
-              <BasicButton onClick={handleSaveClick}>目標を上書き保存</BasicButton>
+              <BasicButton onClick={handleSaveClick}>
+                目標を上書き保存
+              </BasicButton>
             ) : (
-              <BasicButton onClick={handleCreateClick}>目標を新規作成</BasicButton>
+              <BasicButton onClick={handleCreateClick}>
+                目標を新規作成
+              </BasicButton>
             )}
-            
           </Box>
         </Modal>
 
