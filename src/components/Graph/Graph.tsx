@@ -11,8 +11,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  TimeScale
 } from "chart.js";
 import BasicButton from "../Tools/BasicButton";
+import dayjs from "dayjs";
 
 ChartJS.register(
   CategoryScale,
@@ -21,12 +23,26 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale
 );
 
 const Graph = () => {
-  const options = {
+  const options :any = {
     responsive: true,
+    scales: {
+      xAxes: [{
+        display: true,
+        type: 'time',
+        time: {
+          unit: 'day',
+          displayFormats: {
+            hour: 'MM/DD'
+          }
+        },
+        distribution: 'series'
+      }],
+    },
     plugins: {
       title: {
         display: true,
@@ -36,21 +52,20 @@ const Graph = () => {
   };
 
   const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
+    { date: "2022-01-01", value: 10 },
+    { date: "2022-01-02", value: 30 },
+    { date: "2022-01-03", value: 70 },
+    { date: "2022-01-04", value: 50 },
+    { date: "2022-01-05", value: 40 },
+    { date: "2022-01-06", value: 30 },
   ];
 
   const data = {
-    labels,
+    labels: labels.map(date => dayjs(date.date).format("MM/DD")),
     datasets: [
       {
         label: "aaaaa",
-        data: [10, 40, 30, 40, 50, 80],
+        data: labels.map(label=> label.value),
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },

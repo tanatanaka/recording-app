@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import BasicButton from "../Tools/BasicButton";
 import Menu from "../Menu/Menu";
 import "./Mypage.css";
+import dayjs from "dayjs";
 
-import { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -13,7 +13,6 @@ import {
   addDoc,
   collection,
   doc,
-  getDoc,
   onSnapshot,
   query,
   updateDoc,
@@ -21,10 +20,7 @@ import {
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
+import { Box, Typography, Modal, TextField } from "@mui/material";
 
 const style = {
   position: "absolute" as "absolute",
@@ -52,20 +48,17 @@ const Mypage = () => {
   };
 
   // 目標入力フォーム
-  const [startDay, setStartDay] = useState<Dayjs | null>(null);
-  const [goalDay, setGoalDay] = useState<Dayjs | null>(null);
+  const [startDay, setStartDay] = useState<any>(null);
+  const [goalDay, setGoalDay] = useState<any>(null);
   const [goalWeight, setGoalWeight] = useState<number | null>(null);
   const [goalBodyFat, setGoalBodyFat] = useState<number | null>(null);
 
-  const startDayChange = (e: Dayjs | null) => {
-    setStartDay(e);
-    // 試しにコンソール出力
-    console.log(typeof startDay)
-    console.log(startDay)
+  const startDayChange = (e: any) => {
+    setStartDay(dayjs(e).format("YYYY/MM/DD"));
   };
 
   const goalDayChange = (e: any) => {
-    setGoalDay(e);
+    setGoalDay(dayjs(e).format("YYYY/MM/DD"));
   };
 
   const goalWeightChange = (e: any) => {
@@ -78,13 +71,16 @@ const Mypage = () => {
     setGoalBodyFat(parseFloat(e.target.value));
   };
 
-  // 目標のデータ管理
+  // 目標
   const [goal, setGoal] = useState<any>(undefined);
+  // 現在
+  const [now, setNow] = useState<any>(undefined);
 
   useEffect(() => {
+    // 目標データ取得
     const goalData = collection(db, "goals");
-    const q = query(goalData);
-    onSnapshot(q, (snapshot: any) => {
+    const goalQuery = query(goalData);
+    onSnapshot(goalQuery, (snapshot: any) => {
       const getGoal = snapshot.docs.map((doc: any) => {
         return {
           id: doc.id,
@@ -92,6 +88,19 @@ const Mypage = () => {
         };
       });
       setGoal(getGoal && getGoal[0]);
+    });
+
+    // graphの最新データのみ取得
+    const nowData = collection(db, "graph");
+    const graphQuery = query(nowData);
+    onSnapshot(graphQuery, (snapshot: any) => {
+      const getNow = snapshot.docs.map((doc: any) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      });
+      setNow(getNow && getNow.pop());
     });
   }, []);
 
@@ -117,6 +126,52 @@ const Mypage = () => {
     });
     handleClose();
   };
+
+  // 目標まで
+  const calcDateDiff = () => {
+    // 目標と現在日時が同じになった時の判定がtrueにならない
+    const dayjs = require("dayjs");
+    const nowDate = dayjs();
+    const goalDate = dayjs(goal && goal.goalDay);
+    const sameDate = nowDate.isSame(goalDate);
+    const date = goalDate.diff(nowDate, "day", false);
+    if (date < 0) {
+      return "目標の日を過ぎました！";
+    } else if (sameDate) {
+      return "目標の日になりました！";
+    } else if (!date) {
+      return "目標達成したい日が未登録です";  
+    } else {
+      return `${date} 日`;
+    }
+  };
+
+  const calcWeightDiff = () => {
+    const w = (now && now.weight) - (goal && goal.goalWeight);
+    const weight = parseFloat(w.toFixed(1));
+    if (w <= 0) {
+      return "目標達成！！";
+    } else if (!weight) {
+      return "目標または現在の数値が登録されていません";
+    } else {
+      return `${weight} kg`;
+    }
+  };
+
+  const calcBodyFatDiff = () => {
+    const f = (now && now.bodyFat) - (goal && goal.goalBodyFat);
+    const bodyFat = parseFloat(f.toFixed(1));
+    if (f <= 0) {
+      return "目標達成！！";
+    } else if (!bodyFat) {
+      return "目標または現在の数値が登録されていません";
+    } else {
+      return `${bodyFat} %`;
+    }
+  };
+  const dateDiff = calcDateDiff();
+  const weightDiff = calcWeightDiff();
+  const bodyFatDiff = calcBodyFatDiff();
 
   // ログアウト
   const navigate = useNavigate();
@@ -149,7 +204,10 @@ const Mypage = () => {
                 "& > :not(style)": { m: 2, width: "265px" },
               }}
             >
-              <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthAndYear: 'YYYY年 MM月' }}>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                dateFormats={{ monthAndYear: "YYYY年 MM月" }}
+              >
                 <DatePicker
                   label="トレーニング開始日"
                   inputFormat="YYYY/MM/DD"
@@ -158,7 +216,10 @@ const Mypage = () => {
                   renderInput={(params: any) => <TextField {...params} />}
                 />
               </LocalizationProvider>
-              <LocalizationProvider dateAdapter={AdapterDayjs} dateFormats={{ monthAndYear: 'YYYY年 MM月' }}>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                dateFormats={{ monthAndYear: "YYYY年 MM月" }}
+              >
                 <DatePicker
                   label="終了目標日"
                   inputFormat="YYYY/MM/DD"
@@ -220,9 +281,9 @@ const Mypage = () => {
           <div className="goalBox">
             <h2>目標まであと・・・</h2>
             <div className="achieveGoal">
-              <p>{}日</p>
-              <p>{}kg</p>
-              <p>{}％</p>
+              <p>{dateDiff && dateDiff}</p>
+              <p>{weightDiff && weightDiff}</p>
+              <p>{bodyFatDiff && bodyFatDiff}</p>
             </div>
           </div>
         </div>
