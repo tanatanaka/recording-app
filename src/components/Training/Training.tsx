@@ -31,9 +31,10 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import CreateForm from "./CreateForm";
+import EditForm from "./EditForm";
 
 const Training = () => {
-  // Modalの開閉
+  // 登録用Modalの開閉
   const [openModal, setOpenModal] = useState(false);
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
@@ -60,6 +61,11 @@ const Training = () => {
     await deleteDoc(doc(db, "training", id));
   };
 
+  // 編集用Modalの開閉
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const handleEditOpen = () => setOpenEditModal(true);
+  const handleEditClose = () => setOpenEditModal(false);
+
   const Row = (props: { row: any }) => {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
@@ -83,7 +89,7 @@ const Training = () => {
           </TableCell>
           <TableCell>
             <IconButton>
-              <EditIcon />
+              <EditIcon onClick={handleEditOpen} />
             </IconButton>
             <IconButton onClick={() => handleDeleteClick(row.id)}>
               <DeleteIcon />
@@ -150,17 +156,17 @@ const Training = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {training.length === 0 ? (
-                  "トレーニング記録が未登録です"
-              ) : (
+              {training.length !== 0 ? (
                 training.map((row: any) => <Row key={row.day} row={row} />)
+              ) : (
+                  "トレーニング記録が未登録です"
               )}
             </TableBody>
           </Table>
         </TableContainer>
 
-        {/* 登録用モーダルウィンドウ */}
         <CreateForm openModal={openModal} handleClose={handleClose} />
+        <EditForm openEditModal={openEditModal} handleEditClose={handleEditClose} training={training} />
       </div>
     </>
   );

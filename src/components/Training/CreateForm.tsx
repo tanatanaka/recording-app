@@ -80,13 +80,13 @@ const CreateForm = (props: any) => {
       menu: [...menu],
     });
     setDay(null);
-    setMenu([
-      {
-        name: "",
-        time: "",
-        count: "",
-      },
-    ]);
+    // setMenu([
+    //   {
+    //     name: "",
+    //     time: "",
+    //     count: "",
+    //   },
+    // ]);
     handleClose();
   };
 
