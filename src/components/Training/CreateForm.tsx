@@ -67,7 +67,7 @@ const CreateForm = (props: any) => {
     ]);
   };
 
-  const deleteForm = (targetIndex: number) => {
+  const deleteForm = (targetIndex: any) => {
     const removedMenuData = menu.filter((_: any, index: number) => {
       return targetIndex !== index;
     });

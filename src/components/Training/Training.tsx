@@ -5,7 +5,6 @@ import Menu from "../Menu/Menu";
 import {
   Box,
   IconButton,
-  Modal,
   Collapse,
   Table,
   TableBody,
@@ -14,6 +13,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Typography,
 } from "@mui/material";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -33,10 +33,10 @@ import { db } from "../../firebase";
 import CreateForm from "./CreateForm";
 
 const Training = () => {
-// Modalの開閉
-const [openModal, setOpenModal] = useState(false);
-const handleOpen = () => setOpenModal(true);
-const handleClose = () => setOpenModal(false);
+  // Modalの開閉
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpen = () => setOpenModal(true);
+  const handleClose = () => setOpenModal(false);
 
   // firebaseから取得したtrainingのstate
   const [training, setTraining] = useState<any>([]);
@@ -55,7 +55,6 @@ const handleClose = () => setOpenModal(false);
     });
   }, []);
 
-  
   // トレーニング削除
   const handleDeleteClick = async (id: string) => {
     await deleteDoc(doc(db, "training", id));
@@ -105,15 +104,16 @@ const handleClose = () => setOpenModal(false);
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.menu && row.menu.map((historyRow: any) => (
-                      <TableRow key={historyRow.name}>
-                        <TableCell component="th" scope="row">
-                          {historyRow.name}
-                        </TableCell>
-                        <TableCell>{historyRow.time}</TableCell>
-                        <TableCell>{historyRow.count}</TableCell>
-                      </TableRow>
-                    ))}
+                    {row.menu &&
+                      row.menu.map((historyRow: any) => (
+                        <TableRow key={historyRow.name}>
+                          <TableCell component="th" scope="row">
+                            {historyRow.name}
+                          </TableCell>
+                          <TableCell>{historyRow.time}</TableCell>
+                          <TableCell>{historyRow.count}</TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </Box>
@@ -138,8 +138,7 @@ const handleClose = () => setOpenModal(false);
           component={Paper}
           sx={{ width: "90%", margin: "0 auto" }}
         >
-          <Table 
-            aria-label="collapsible table">
+          <Table aria-label="collapsible table">
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontSize: "18px", letterSpacing: "1.5px" }}>
@@ -151,20 +150,17 @@ const handleClose = () => setOpenModal(false);
               </TableRow>
             </TableHead>
             <TableBody>
-              {training.map((row: any) => (
-                  <Row key={row.day} row={row} />
-                ))
-              }
+              {training.length === 0 ? (
+                  "トレーニング記録が未登録です"
+              ) : (
+                training.map((row: any) => <Row key={row.day} row={row} />)
+              )}
             </TableBody>
           </Table>
         </TableContainer>
-        {training || <p>トレーニング記録が未登録です</p>}
 
         {/* 登録用モーダルウィンドウ */}
-        <CreateForm 
-          openModal={openModal} 
-          handleClose={handleClose}
-        />
+        <CreateForm openModal={openModal} handleClose={handleClose} />
       </div>
     </>
   );
