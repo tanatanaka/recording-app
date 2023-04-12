@@ -16,19 +16,13 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 556,
   bgcolor: "background.paper",
-  border: "1px solid rgba(47, 132, 141, 0.8)",
+   border: "1px solid rgba(50, 87, 91, 0.8)",
+  color: "rgba(50, 87, 91, 0.8)",
   boxShadow: 24,
-  padding: 4,
+  p: 4,
   textAlign: "center",
+  borderRadius: "5px",
 };
-
-type Menu = [
-  {
-    name: string;
-    time: number | null;
-    count: number | null;
-  }
-];
 
 const CreateForm = (props: any) => {
   const { openModal, handleClose } = props;
@@ -74,19 +68,20 @@ const CreateForm = (props: any) => {
     setMenu(removedMenuData);
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = async (e: any) => {
+    e.preventDefault();
     await addDoc(collection(db, "training"), {
       day,
       menu: [...menu],
     });
     setDay(null);
-    // setMenu([
-    //   {
-    //     name: "",
-    //     time: "",
-    //     count: "",
-    //   },
-    // ]);
+    setMenu([
+      {
+        name: "",
+        time: "",
+        count: "",
+      },
+    ]);
     handleClose();
   };
 

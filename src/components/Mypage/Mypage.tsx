@@ -29,10 +29,12 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  border: "1px solid rgba(50, 87, 91, 0.8)",
+  color: "rgba(50, 87, 91, 0.8)",
   boxShadow: 24,
   p: 4,
   textAlign: "center",
+  borderRadius: "5px",
 };
 
 const Mypage = () => {
@@ -129,42 +131,50 @@ const Mypage = () => {
 
   // 目標まで
   const calcDateDiff = () => {
-    // 目標と現在日時が同じになった時の判定がtrueにならない
     const dayjs = require("dayjs");
     const nowDate = dayjs();
     const goalDate = dayjs(goal && goal.goalDay);
-    const sameDate = nowDate.isSame(goalDate);
+
+    const formatNowDate = nowDate.format("YYYY/MM/DD");
+    const formatGoalDate = goalDate.format("YYYY/MM/DD");
+    const sameDate = formatNowDate === formatGoalDate;
     const date = goalDate.diff(nowDate, "day", false);
     if (date < 0) {
       return "目標の日を過ぎました！";
     } else if (sameDate) {
       return "目標の日になりました！";
+    } else if (date === 0) {
+      return `${date + 1} 日`;
     } else if (!date) {
-      return "目標達成したい日が未登録です";  
+      return "目標達成したい日が未登録です";
     } else {
-      return `${date} 日`;
+      return `${date + 1} 日`;
     }
   };
 
   const calcWeightDiff = () => {
-    const w = (now && now.weight) - (goal && goal.goalWeight);
+    const nowWeight = now ? now.weight : false;
+    const goalWeight = goal ? goal.goalWeight : false;
+    const w = nowWeight - goalWeight;
     const weight = parseFloat(w.toFixed(1));
-    if (w <= 0) {
-      return "目標達成！！";
-    } else if (!weight) {
+    if (!weight || !nowWeight || !goalWeight) {
       return "目標または現在の数値が登録されていません";
+    } else if (w <= 0) {
+      return "目標達成！！";
     } else {
       return `${weight} kg`;
     }
   };
 
   const calcBodyFatDiff = () => {
-    const f = (now && now.bodyFat) - (goal && goal.goalBodyFat);
+    const nowBodyFat = now ? now.bodyFat : false;
+    const goalBodyFat = goal ? goal.goalBodyFat : false;
+    const f = nowBodyFat - goalBodyFat;
     const bodyFat = parseFloat(f.toFixed(1));
-    if (f <= 0) {
-      return "目標達成！！";
-    } else if (!bodyFat) {
+    if (!bodyFat || !nowBodyFat || !goalBodyFat) {
       return "目標または現在の数値が登録されていません";
+    } else if (f <= 0) {
+      return "目標達成！！";
     } else {
       return `${bodyFat} %`;
     }
@@ -242,7 +252,17 @@ const Mypage = () => {
                 onChange={goalBodyFatChange}
               />
             </Box>
-            <p>※既存の目標は上書きされます</p>
+            <Typography
+              sx={{
+                color: "black",
+                opacity: 0.8,
+                fontSize: "13px",
+                letterSpacing: "1px",
+                marginTop: "15px"
+              }}
+            >
+              ※既存の目標は上書きされます
+            </Typography>
             {goal ? (
               <BasicButton onClick={handleSaveClick}>
                 目標を上書き保存
@@ -281,9 +301,9 @@ const Mypage = () => {
           <div className="goalBox">
             <h2>目標まであと・・・</h2>
             <div className="achieveGoal">
-              <p>{dateDiff && dateDiff}</p>
-              <p>{weightDiff && weightDiff}</p>
-              <p>{bodyFatDiff && bodyFatDiff}</p>
+              <p>{dateDiff}</p>
+              <p>{weightDiff}</p>
+              <p>{bodyFatDiff}</p>
             </div>
           </div>
         </div>

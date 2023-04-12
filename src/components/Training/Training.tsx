@@ -63,7 +63,11 @@ const Training = () => {
 
   // 編集用Modalの開閉
   const [openEditModal, setOpenEditModal] = useState(false);
-  const handleEditOpen = () => setOpenEditModal(true);
+  const [editTraining, setEditTrainig] = useState({});
+  const handleEditOpen = (training: any) => {
+    setOpenEditModal(true);
+    setEditTrainig({ ...training });
+  };
   const handleEditClose = () => setOpenEditModal(false);
 
   const Row = (props: { row: any }) => {
@@ -88,8 +92,8 @@ const Training = () => {
             {row.day}
           </TableCell>
           <TableCell>
-            <IconButton>
-              <EditIcon onClick={handleEditOpen} />
+            <IconButton onClick={() => handleEditOpen(row)} >
+              <EditIcon/>
             </IconButton>
             <IconButton onClick={() => handleDeleteClick(row.id)}>
               <DeleteIcon />
@@ -159,14 +163,20 @@ const Training = () => {
               {training.length !== 0 ? (
                 training.map((row: any) => <Row key={row.day} row={row} />)
               ) : (
-                  "トレーニング記録が未登録です"
+                <TableRow>
+                  <TableCell>トレーニング記録が未登録です</TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>
         </TableContainer>
 
         <CreateForm openModal={openModal} handleClose={handleClose} />
-        <EditForm openEditModal={openEditModal} handleEditClose={handleEditClose} training={training} />
+        <EditForm
+          openEditModal={openEditModal}
+          handleEditClose={handleEditClose}
+          editTraining={editTraining}
+        />
       </div>
     </>
   );
