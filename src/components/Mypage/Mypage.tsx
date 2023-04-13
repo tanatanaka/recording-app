@@ -14,6 +14,7 @@ import {
   collection,
   doc,
   onSnapshot,
+  orderBy,
   query,
   updateDoc,
 } from "firebase/firestore";
@@ -94,7 +95,7 @@ const Mypage = () => {
 
     // graphの最新データのみ取得
     const nowData = collection(db, "graph");
-    const graphQuery = query(nowData);
+    const graphQuery = query(nowData, orderBy("date", "desc"));
     onSnapshot(graphQuery, (snapshot: any) => {
       const getNow = snapshot.docs.map((doc: any) => {
         return {
@@ -102,7 +103,7 @@ const Mypage = () => {
           ...doc.data(),
         };
       });
-      setNow(getNow && getNow.pop());
+      setNow(getNow && getNow.shift());
     });
   }, []);
 

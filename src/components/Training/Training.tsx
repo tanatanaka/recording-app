@@ -13,7 +13,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography,
 } from "@mui/material";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -27,6 +26,7 @@ import {
   deleteDoc,
   doc,
   onSnapshot,
+  orderBy,
   query,
 } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -39,11 +39,16 @@ const Training = () => {
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
 
+  // 編集用Modalの開閉
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [editTraining, setEditTraining] = useState({});
+  const handleEditClose = () => setOpenEditModal(false);
+
   // firebaseから取得したtrainingのstate
   const [training, setTraining] = useState<any>([]);
   useEffect(() => {
     const trainingData = collection(db, "training");
-    const q = query(trainingData);
+    const q = query(trainingData, orderBy("day", "desc"));
     onSnapshot(q, (snapshot: any) => {
       setTraining(
         snapshot.docs.map((doc: any) => {
@@ -55,84 +60,6 @@ const Training = () => {
       );
     });
   }, []);
-
-  // トレーニング削除
-  const handleDeleteClick = async (id: string) => {
-    await deleteDoc(doc(db, "training", id));
-  };
-
-  // 編集用Modalの開閉
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [editTraining, setEditTrainig] = useState({});
-  const handleEditOpen = (training: any) => {
-    setOpenEditModal(true);
-    setEditTrainig({ ...training });
-  };
-  const handleEditClose = () => setOpenEditModal(false);
-
-  const Row = (props: { row: any }) => {
-    const { row } = props;
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <React.Fragment>
-        <TableRow
-          sx={{
-            "& > *": { borderBottom: "none", fontSize: "17px" },
-          }}
-        >
-          <TableCell align="left">
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-            {row.day}
-          </TableCell>
-          <TableCell>
-            <IconButton onClick={() => handleEditOpen(row)} >
-              <EditIcon/>
-            </IconButton>
-            <IconButton onClick={() => handleDeleteClick(row.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </TableCell>
-        </TableRow>
-
-        <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Menu</TableCell>
-                      <TableCell>Time</TableCell>
-                      <TableCell>Count</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {row.menu &&
-                      row.menu.map((historyRow: any) => (
-                        <TableRow key={historyRow.name}>
-                          <TableCell component="th" scope="row">
-                            {historyRow.name}
-                          </TableCell>
-                          <TableCell>{historyRow.time}</TableCell>
-                          <TableCell>{historyRow.count}</TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </Box>
-            </Collapse>
-          </TableCell>
-        </TableRow>
-      </React.Fragment>
-    );
-  };
 
   return (
     <>
@@ -161,7 +88,14 @@ const Training = () => {
             </TableHead>
             <TableBody>
               {training.length !== 0 ? (
-                training.map((row: any) => <Row key={row.day} row={row} />)
+                training.map((row: any) => (
+                  <Row
+                    key={row.day}
+                    row={row}
+                    setEditTraining={setEditTraining}
+                    setOpenEditModal={setOpenEditModal}
+                  />
+                ))
               ) : (
                 <TableRow>
                   <TableCell>トレーニング記録が未登録です</TableCell>
@@ -183,3 +117,78 @@ const Training = () => {
 };
 
 export default Training;
+
+const Row = (props: any) => {
+  const { row, setEditTraining, setOpenEditModal } = props;
+  const [open, setOpen] = useState(false);
+
+  // 編集用Modalの開閉
+  const handleEditOpen = (training: any) => {
+    setEditTraining({ ...training });
+    setOpenEditModal(true);
+  };
+
+  // トレーニング削除
+  const handleDeleteClick = async (id: string) => {
+    await deleteDoc(doc(db, "training", id));
+  };
+
+  return (
+    <React.Fragment>
+      <TableRow
+        sx={{
+          "& > *": { borderBottom: "none", fontSize: "17px" },
+        }}
+      >
+        <TableCell align="left">
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+          {row.day}
+        </TableCell>
+        <TableCell>
+          <IconButton onClick={() => handleEditOpen(row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteClick(row.id)}>
+            <DeleteIcon />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Menu</TableCell>
+                    <TableCell>Time</TableCell>
+                    <TableCell>Count</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {row.menu &&
+                    row.menu.map((historyRow: any) => (
+                      <TableRow key={historyRow.name}>
+                        <TableCell component="th" scope="row">
+                          {historyRow.name}
+                        </TableCell>
+                        <TableCell>{historyRow.time}</TableCell>
+                        <TableCell>{historyRow.count}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </React.Fragment>
+  );
+};

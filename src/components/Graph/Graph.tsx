@@ -14,6 +14,7 @@ import {
   collection,
   doc,
   onSnapshot,
+  orderBy,
   query,
   updateDoc,
 } from "firebase/firestore";
@@ -59,10 +60,10 @@ ChartJS.register(
 );
 
 const Graph = () => {
-  const [graphData, setGraphData] = useState<any>(undefined);
+  const [graphData, setGraphData] = useState<any>([]);
   useEffect(() => {
     const data = collection(db, "graph");
-    const q = query(data);
+    const q = query(data, orderBy("date", "asc"));
     onSnapshot(q, (snapshot: any) => {
       setGraphData(
         snapshot.docs.map((doc: any) => {
@@ -74,11 +75,6 @@ const Graph = () => {
       );
     });
   }, []);
-  console.log(graphData);
-  console.log(typeof graphData);
-  const arr = [1, 2, 3, 4, 5, 6];
-  console.log(arr);
-  console.log(typeof arr);
 
   // Modalの開閉
   const [open, setOpen] = useState<boolean>(false);
@@ -139,46 +135,41 @@ const Graph = () => {
   const options: any = {
     responsive: true,
     scales: {
-      xAxes: [
-        {
-          display: true,
-          type: "time",
-          time: {
-            unit: "day",
-            displayFormats: {
-              hour: "MM/DD",
-            },
-          },
-          distribution: "series",
-        },
-      ],
+      // xAxes: [
+      //   { 
+      //     display: true,
+      //     type: "time",
+      //     time: {
+      //       unit: "day",
+      //       displayFormats: {
+      //         hour: "MM/DD",
+      //       },
+      //     },
+      //     distribution: "series",
+      //   },
+      // ],
     },
     plugins: {
       title: {
-        display: true,
+        display: false,
         text: "体重",
       },
     },
   };
 
-  // const labelData =
-  //   graphData &&
-  //   graphData.map((data: any) => {
-  //     return { date: data.date, value: data.weight };
-  //   });
+  const labelData =
+    graphData &&
+    graphData.map((data: any) => {
+      return { date: data.date, value: data.weight };
+    });
 
-  const labels = [
-    // ...labelData,
-    { date: "2022-01-01", value: 10 },
-    { date: "2022-01-02", value: 30 },
-    { date: "2022-01-03", value: 70 },
-  ];
+  const labels = [...labelData];
 
   const data = {
     labels: labels.map((date) => dayjs(date.date).format("MM/DD")),
     datasets: [
       {
-        label: "aaaaa",
+        label: "体重",
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
         data: labels.map((label) => label.value),

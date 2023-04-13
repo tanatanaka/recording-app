@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import BasicButton from "../Tools/BasicButton";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -16,7 +16,7 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 556,
   bgcolor: "background.paper",
-   border: "1px solid rgba(50, 87, 91, 0.8)",
+  border: "1px solid rgba(50, 87, 91, 0.8)",
   color: "rgba(50, 87, 91, 0.8)",
   boxShadow: 24,
   p: 4,
@@ -26,14 +26,14 @@ const style = {
 
 const EditForm = (props: any) => {
   const { openEditModal, handleEditClose, editTraining } = props;
-  console.log(editTraining.menu)
 
   // トレーニング編集フォーム
   const [day, setDay] = useState<any>(editTraining.day);
-  // 上手くいかない　editTraining.menu is not iterable
-  const [editedMenu, setEditedMenu] = useState<any>([...editTraining.menu]);
-  // 選択したデータの中身を確認するため一時的に記述
-  console.log(editTraining)
+  const [editedMenu, setEditedMenu] = useState<any>(editTraining.menu);
+
+  useEffect(() => {
+    setEditedMenu(editTraining.menu);
+  }, [editTraining]);
 
   const dayChange = (e: any) => {
     setDay(dayjs(e).format("YYYY/MM/DD"));
@@ -60,9 +60,11 @@ const EditForm = (props: any) => {
   };
 
   const deleteForm = (targetIndex: any) => {
-    const removedMenuData = editTraining.menu.filter((_: any, index: number) => {
-      return targetIndex !== index;
-    });
+    const removedMenuData = editTraining.menu.filter(
+      (_: any, index: number) => {
+        return targetIndex !== index;
+      }
+    );
     setEditedMenu(removedMenuData);
   };
 
@@ -88,13 +90,8 @@ const EditForm = (props: any) => {
           <Typography variant="h6" component="h6">
             トレーニングを編集
           </Typography>
-          <Box
-            component="form"
-            sx={{
-              "& > :not(style)": { m: 1, textAlign: "left" },
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ m: 1, textAlign: "left" }}>
+            <Box sx={{ marginBottom: "10px" }}>
               <LocalizationProvider
                 dateAdapter={AdapterDayjs}
                 dateFormats={{ monthAndYear: "YYYY年 MM月" }}
@@ -104,22 +101,29 @@ const EditForm = (props: any) => {
                   inputFormat="YYYY/MM/DD"
                   value={day}
                   onChange={dayChange}
-                  renderInput={(params: any) => <TextField
-                    sx={{ width: "180px", marginTop: "20px" }}
-                    {...params} />}
+                  renderInput={(params: any) => (
+                    <TextField
+                      sx={{ width: "220px", marginTop: "20px" }}
+                      {...params}
+                    />
+                  )}
                 />
               </LocalizationProvider>
 
-              <IconButton onClick={addForm} sx={{ fontSize: "16px" }}>
+              <IconButton
+                onClick={addForm}
+                sx={{ fontSize: "16px", marginTop: "25px", marginLeft: "10px" }}
+              >
                 メニューを追加
                 <AddCircleOutlineIcon />
               </IconButton>
             </Box>
+
             {editedMenu &&
               editedMenu.map((_: any, index: any) => (
                 <Box key={index}>
                   <TextField
-                    sx={{ width: "300px" }}
+                    sx={{ width: "300px"}}
                     label="メニュー"
                     variant="outlined"
                     type="text"
@@ -160,12 +164,18 @@ const EditForm = (props: any) => {
                     }
                     value={editedMenu[index].count}
                   />
-                  <IconButton onClick={() => deleteForm(index)}>
+                  <IconButton
+                    onClick={() => deleteForm(index)}
+                    sx={{ marginTop: "8px" }}
+                  >
                     <RemoveCircleOutlineIcon />
                   </IconButton>
                 </Box>
               ))}
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "32px" }}>
             <BasicButton onClick={handleSaveClick}>保存</BasicButton>
+            <BasicButton onClick={handleEditClose}>キャンセル</BasicButton>
           </Box>
         </Box>
       </Modal>
@@ -173,4 +183,4 @@ const EditForm = (props: any) => {
   );
 };
 
-export default EditForm
+export default EditForm;
