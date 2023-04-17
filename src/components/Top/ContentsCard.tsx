@@ -8,9 +8,9 @@ import CardMedia from '@mui/material/CardMedia';
 
 const ContentsCard = ({image, children}: any) => {
   return (
-    <Card sx={{ width: 350, height: 300 }}>
+    <Card sx={{ width: 350, height: 350 }}>
       <CardMedia
-        sx={{ height: 160 }}
+        sx={{ height: 210 }}
         image={image}
         title="contents image"
       />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Training.css";
-import Menu from "../Menu/Menu";
+import Menu from "../Menu/MenuBar";
 
 import {
   Box,

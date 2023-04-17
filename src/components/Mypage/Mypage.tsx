@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import BasicButton from "../Tools/BasicButton";
-import Menu from "../Menu/Menu";
+import Menu from "../Menu/MenuBar";
 import "./Mypage.css";
 import dayjs from "dayjs";
 
@@ -251,6 +251,7 @@ const Mypage = () => {
                 variant="outlined"
                 type="number"
                 onChange={goalBodyFatChange}
+                sx={{marginBottom: "10px"}}
               />
             </Box>
             <Typography
@@ -259,7 +260,7 @@ const Mypage = () => {
                 opacity: 0.8,
                 fontSize: "13px",
                 letterSpacing: "1px",
-                marginTop: "15px"
+                marginTop: "15px",
               }}
             >
               ※既存の目標は上書きされます

@@ -16,7 +16,7 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 556,
   bgcolor: "background.paper",
-   border: "1px solid rgba(50, 87, 91, 0.8)",
+  border: "1px solid rgba(50, 87, 91, 0.8)",
   color: "rgba(50, 87, 91, 0.8)",
   boxShadow: 24,
   p: 4,
@@ -87,23 +87,13 @@ const CreateForm = (props: any) => {
 
   return (
     <>
-      <Modal
-        open={openModal}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={openModal} onClose={handleClose}>
         <Box sx={style}>
           <Typography variant="h6" component="h6">
             トレーニングを追加
           </Typography>
-          <Box
-            component="form"
-            sx={{
-              "& > :not(style)": { m: 1, textAlign: "left" },
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ m: 1, textAlign: "left" }}>
+            <Box sx={{ marginBottom: "10px" }}>
               <LocalizationProvider
                 dateAdapter={AdapterDayjs}
                 dateFormats={{ monthAndYear: "YYYY年 MM月" }}
@@ -113,20 +103,26 @@ const CreateForm = (props: any) => {
                   inputFormat="YYYY/MM/DD"
                   value={day}
                   onChange={dayChange}
-                  renderInput={(params: any) => <TextField
-                    sx={{ width: "180px", marginTop: "20px" }}
-                    {...params} />}
+                  renderInput={(params: any) => (
+                    <TextField
+                      sx={{ width: "220px", marginTop: "20px" }}
+                      {...params}
+                    />
+                  )}
                 />
               </LocalizationProvider>
 
-              <IconButton onClick={addForm} sx={{ fontSize: "16px" }}>
+              <IconButton
+                onClick={addForm}
+                sx={{ fontSize: "16px", marginTop: "25px", marginLeft: "10px" }}
+              >
                 メニューを追加
                 <AddCircleOutlineIcon />
               </IconButton>
             </Box>
             {menu &&
               menu.map((_, index) => (
-                <Box key={index}>
+                <Box key={index}  sx={{marginBottom: "10px"}}>
                   <TextField
                     sx={{ width: "300px" }}
                     label="メニュー"
@@ -169,12 +165,25 @@ const CreateForm = (props: any) => {
                     }
                     value={menu[index].count}
                   />
-                  <IconButton onClick={() => deleteForm(index)}>
+                  <IconButton
+                    onClick={() => deleteForm(index)}
+                    sx={{ marginTop: "8px" }}
+                  >
                     <RemoveCircleOutlineIcon />
                   </IconButton>
                 </Box>
               ))}
-            <BasicButton onClick={handleSaveClick}>保存</BasicButton>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "10px",
+                marginTop: "32px",
+              }}
+            >
+              <BasicButton onClick={handleSaveClick}>保存</BasicButton>
+              <BasicButton onClick={handleClose}>キャンセル</BasicButton>
+            </Box>
           </Box>
         </Box>
       </Modal>

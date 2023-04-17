@@ -32,6 +32,7 @@ const EditForm = (props: any) => {
   const [editedMenu, setEditedMenu] = useState<any>(editTraining.menu);
 
   useEffect(() => {
+    setDay(editTraining.day);
     setEditedMenu(editTraining.menu);
   }, [editTraining]);
 
@@ -75,6 +76,7 @@ const EditForm = (props: any) => {
       day,
       menu: [...editedMenu],
     });
+    setDay("")
     handleEditClose();
   };
 
@@ -83,8 +85,6 @@ const EditForm = (props: any) => {
       <Modal
         open={openEditModal}
         onClose={handleEditClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
           <Typography variant="h6" component="h6">
@@ -121,7 +121,7 @@ const EditForm = (props: any) => {
 
             {editedMenu &&
               editedMenu.map((_: any, index: any) => (
-                <Box key={index}>
+                <Box key={index} sx={{marginBottom: "10px"}}>
                   <TextField
                     sx={{ width: "300px"}}
                     label="メニュー"

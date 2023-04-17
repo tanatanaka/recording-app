@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Menu from "../Menu/Menu";
+import Menu from "../Menu/MenuBar";
 import "./Graph.css";
 import dayjs from "dayjs";
 
@@ -33,6 +33,17 @@ import {
 } from "chart.js";
 import BasicButton from "../Tools/BasicButton";
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale
+);
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -47,17 +58,6 @@ const style = {
   textAlign: "center",
   borderRadius: "5px",
 };
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  TimeScale
-);
 
 const Graph = () => {
   const [graphData, setGraphData] = useState<any>([]);
@@ -95,10 +95,13 @@ const Graph = () => {
   const dateChange = (e: any) => {
     const inputDate = dayjs(e).format("YYYY-MM-DD");
     const targetData = graphData.find((data: any) => inputDate === data.date);
-    setDate(inputDate)
+    console.log(graphData.find((data: any) => inputDate === data.date));
+    setDate(inputDate);
     if (targetData) {
       setUpdateButton(true);
       setUpdateTarget(targetData);
+    } else {
+      setUpdateButton(false);
     }
   };
 
@@ -134,45 +137,49 @@ const Graph = () => {
 
   const options: any = {
     responsive: true,
-    scales: {
-      // xAxes: [
-      //   { 
-      //     display: true,
-      //     type: "time",
-      //     time: {
-      //       unit: "day",
-      //       displayFormats: {
-      //         hour: "MM/DD",
-      //       },
-      //     },
-      //     distribution: "series",
-      //   },
-      // ],
+    interaction: {
+      mode: "index" as const,
+      intersect: false,
     },
+    stacked: true,
     plugins: {
       title: {
         display: false,
-        text: "体重",
+      },
+    },
+    scales: {
+      weight: {
+        type: "linear" as const,
+        display: true,
+        position: "left" as const,
+      },
+      bodyFat: {
+        type: "linear" as const,
+        display: true,
+        position: "right" as const,
+        grid: {
+          drawOnChartArea: false,
+        },
       },
     },
   };
 
-  const labelData =
-    graphData &&
-    graphData.map((data: any) => {
-      return { date: data.date, value: data.weight };
-    });
-
-  const labels = [...labelData];
-
   const data = {
-    labels: labels.map((date) => dayjs(date.date).format("MM/DD")),
+    labels: graphData.map((date: any) => dayjs(date.date).format("MM/DD")),
     datasets: [
       {
         label: "体重",
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-        data: labels.map((label) => label.value),
+        borderColor: "rgb(47, 132, 141)",
+        backgroundColor: "rgba(47, 132, 141, 0.5)",
+        data: graphData.map((label: any) => label.weight),
+        yAxisID: "weight",
+      },
+      {
+        label: "体脂肪率",
+        borderColor: "rgb(220, 186, 220)",
+        backgroundColor: "rgba(220, 186, 220, 0.5)",
+        data: graphData.map((label: any) => label.bodyFat),
+        yAxisID: "bodyFat",
       },
     ],
   };
@@ -219,7 +226,6 @@ const Graph = () => {
                   renderInput={(params: any) => <TextField {...params} />}
                 />
               </LocalizationProvider>
-
               <TextField
                 label="体重"
                 variant="outlined"

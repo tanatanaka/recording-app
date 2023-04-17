@@ -1,46 +1,13 @@
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import "./Top.css";
+import ContentsCard from "./ContentsCard";
 
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import ContentsCard from "../Tools/ContentsCard";
+import Auth from "./Auth";
 
 const Top = () => {
-  // タブの選択状況
-  const [tab, setTab] = useState<boolean>(true);
-
-  // Login機能
-  // emailの入力値のstate
-  const [email, setEmail] = useState<string>("");
-  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setEmail(e.target.value);
-  };
-
-  // passwordの入力値のstate
-  const [pass, setPass] = useState<string>("");
-  const onChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setPass(e.target.value);
-  };
-
-  // SignUp機能
-  // emailの入力値のstate
-  const [newEmail, setNewEmail] = useState<string>("");
-  const onChangeNewEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setNewEmail(e.target.value);
-  };
-
-  // passwordの入力値のstate
-  const [newPass, setNewPass] = useState<string>("");
-  const onChangeNewPass = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setNewPass(e.target.value);
-  };
+  
 
   return (
     <div className="body">
@@ -51,7 +18,8 @@ const Top = () => {
         </div>
 
         <div className="formBox">
-          <button
+          <Auth />
+          {/* <button
             className={tab ? "selectTab" : "tabButton"}
             onClick={() => setTab(true)}
           >
@@ -105,7 +73,7 @@ const Top = () => {
                 <button disabled>SignUp</button>
               )}
             </form>
-          )}
+          )} */}
         </div>
       </div>
 
