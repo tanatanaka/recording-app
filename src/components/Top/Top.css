@@ -9,11 +9,13 @@ body {
   height: 100vh;
   background: linear-gradient(to top, rgba(220, 186, 220, 0.6) 0%, rgba(47, 132, 141, 0.8) 100%),url(https://images.unsplash.com/photo-1591311630200-ffa9120a540f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1410&q=80);
   background-size: cover;
+  background-position: 50% 50%;
   z-index: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 40px;
   color: #fff;
 }
 
@@ -22,11 +24,11 @@ body {
   gap: 50px;
   justify-content: center;
   align-items: center;
-  margin-top: 150px;
+  margin-top: 50px;
+  z-index: 2;
 }
 
 .title {
-  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -121,14 +123,40 @@ button:disabled {
 
 .contents {
   display: flex;
-  gap: 100px;
+  justify-content: center;
+  gap: 40px;
 }
 
 .contents > div {
   color: rgba(44, 113, 121, 0.8);
   background-color: #fff;
-  margin-top: 50px;
   border-radius: 2px;
 }
 
-
+@media screen and (max-width:600px)  {
+  .body {
+    background-attachment: fixed;
+  }
+  .flex,
+  .contents {
+    flex-direction: column;
+    align-items: center;
+  }
+  .flex{
+    position: absolute;
+  }
+  .formBox {
+    width: 80%;
+  }
+  .contents {
+    position: relative;
+    top: 140%;
+    margin-bottom: 50px;
+  }
+  .pageTitle {
+    font-size: 24px;
+  }
+  .button {
+    text-align: center;
+  }
+}

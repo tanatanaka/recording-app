@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
@@ -46,6 +46,8 @@ const Auth = () => {
             break;
         }
       });
+    setEmail("");
+    setPass("");
   };
 
   // SignUp機能
@@ -65,22 +67,26 @@ const Auth = () => {
 
   const handleSignUpSubmit = (e: any) => {
     e.preventDefault();
-    createUserWithEmailAndPassword(auth, newEmail, newPass).then(() => navigate("/")).catch((error) => {
-      switch (error.code) {
-        case 'auth/invalid-email':
-          setError('正しいメールアドレスの形式で入力してください。');
-          break;
-        case 'auth/weak-password':
-          setError('パスワードは6文字以上を設定する必要があります。');
-          break;
-        case 'auth/email-already-in-use':
-          setError('そのメールアドレスは登録済みです。');
-          break;
-        default:
-          setError('メールアドレスかパスワードに誤りがあります。');
-          break;
-      }
-    })
+    createUserWithEmailAndPassword(auth, newEmail, newPass)
+      .then(() => navigate("/"))
+      .catch((error) => {
+        switch (error.code) {
+          case "auth/invalid-email":
+            setError("正しいメールアドレスの形式で入力してください。");
+            break;
+          case "auth/weak-password":
+            setError("パスワードは6文字以上を設定する必要があります。");
+            break;
+          case "auth/email-already-in-use":
+            setError("そのメールアドレスは登録済みです。");
+            break;
+          default:
+            setError("メールアドレスかパスワードに誤りがあります。");
+            break;
+        }
+      });
+    setNewEmail("");
+    setNewPass("");
   };
 
   return (

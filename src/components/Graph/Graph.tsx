@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import Menu from "../Menu/MenuBar";
 import "./Graph.css";
+import { ModalStyle, SpModalStyle } from "../Tools/ModalStyle";
 import dayjs from "dayjs";
 
-import { Box, Typography, Modal, TextField } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Modal,
+  TextField,
+  useMediaQuery,
+} from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -44,21 +51,6 @@ ChartJS.register(
   TimeScale
 );
 
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "1px solid rgba(50, 87, 91, 0.8)",
-  color: "rgba(50, 87, 91, 0.8)",
-  boxShadow: 24,
-  p: 4,
-  textAlign: "center",
-  borderRadius: "5px",
-};
-
 const Graph = () => {
   const [graphData, setGraphData] = useState<any>([]);
   useEffect(() => {
@@ -85,6 +77,9 @@ const Graph = () => {
     setBodyFat(null);
     setOpen(false);
   };
+
+  // ブレークポイント
+  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
 
   const [date, setDate] = useState<any>(null);
   const [weight, setWeight] = useState<number | null>(null);
@@ -204,14 +199,18 @@ const Graph = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
+          <Box sx={breakPoint ? SpModalStyle : ModalStyle}>
             <Typography variant="h6" component="h2">
               データを入力
             </Typography>
             <Box
               component="form"
               sx={{
-                "& > :not(style)": { m: 2, width: "265px" },
+                "& > :not(style)": {
+                  m: 1,
+                  width: { sx: "210px", sm: "265px" },
+                },
+                marginBottom: "20px",
               }}
             >
               <LocalizationProvider
@@ -252,15 +251,20 @@ const Graph = () => {
                 >
                   ※既存のデータは上書きされます
                 </Typography>
-                <BasicButton onClick={handleSaveClick}>
-                  データを上書き保存
-                </BasicButton>
+                <div className="saveButton">
+                  <BasicButton onClick={handleSaveClick}>
+                    データを上書き保存
+                  </BasicButton>
+                </div>
               </>
             ) : (
-              <BasicButton onClick={handleCreateClick}>
-                データを保存
-              </BasicButton>
+              <div className="saveButton">
+                <BasicButton onClick={handleCreateClick}>
+                  データを保存
+                </BasicButton>
+              </div>
             )}
+            <BasicButton onClick={handleClose}>キャンセル</BasicButton>
           </Box>
         </Modal>
       </div>

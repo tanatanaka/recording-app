@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import BasicButton from "../Tools/BasicButton";
 import Menu from "../Menu/MenuBar";
 import "./Mypage.css";
+import { ModalStyle, SpModalStyle } from "../Tools/ModalStyle";
 import dayjs from "dayjs";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -21,22 +22,13 @@ import {
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-import { Box, Typography, Modal, TextField } from "@mui/material";
-
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "1px solid rgba(50, 87, 91, 0.8)",
-  color: "rgba(50, 87, 91, 0.8)",
-  boxShadow: 24,
-  p: 4,
-  textAlign: "center",
-  borderRadius: "5px",
-};
+import {
+  Box,
+  Typography,
+  Modal,
+  TextField,
+  useMediaQuery,
+} from "@mui/material";
 
 const Mypage = () => {
   // Modalの開閉
@@ -49,6 +41,9 @@ const Mypage = () => {
     setGoalBodyFat(null);
     setOpen(false);
   };
+
+  // ブレークポイント
+  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
 
   // 目標入力フォーム
   const [startDay, setStartDay] = useState<any>(null);
@@ -205,14 +200,14 @@ const Mypage = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
+          <Box sx={breakPoint ? SpModalStyle : ModalStyle}>
             <Typography variant="h6" component="h2">
               目標を入力
             </Typography>
             <Box
               component="form"
               sx={{
-                "& > :not(style)": { m: 2, width: "265px" },
+                "& > :not(style)": { m: 1, width: {xs: "180px", sm: "265px"}  },
               }}
             >
               <LocalizationProvider
@@ -251,24 +246,27 @@ const Mypage = () => {
                 variant="outlined"
                 type="number"
                 onChange={goalBodyFatChange}
-                sx={{marginBottom: "10px"}}
+                sx={{ marginBottom: "10px" }}
               />
             </Box>
-            <Typography
-              sx={{
-                color: "black",
-                opacity: 0.8,
-                fontSize: "13px",
-                letterSpacing: "1px",
-                marginTop: "15px",
-              }}
-            >
-              ※既存の目標は上書きされます
-            </Typography>
+
             {goal ? (
-              <BasicButton onClick={handleSaveClick}>
-                目標を上書き保存
-              </BasicButton>
+              <>
+                <Typography
+                  sx={{
+                    color: "black",
+                    opacity: 0.8,
+                    fontSize: "13px",
+                    letterSpacing: "1px",
+                    marginTop: "15px",
+                  }}
+                >
+                  ※既存の目標は上書きされます
+                </Typography>
+                <BasicButton onClick={handleSaveClick}>
+                  目標を上書き保存
+                </BasicButton>
+              </>
             ) : (
               <BasicButton onClick={handleCreateClick}>
                 目標を新規作成
@@ -311,7 +309,7 @@ const Mypage = () => {
         </div>
 
         <div className="logout">
-          <BasicButton onClick={handleLogout}>Logout</BasicButton>
+          <BasicButton onClick={handleLogout}>ログアウト</BasicButton>
         </div>
       </div>
     </>

@@ -36,3 +36,11 @@
   transition: 0s;
   opacity: 0.3;
 }
+
+@media screen and (max-width:600px)  {
+  .basicButton {
+    width: 185px;
+    height: 35px;
+    font-size: 11px;
+  }
+}

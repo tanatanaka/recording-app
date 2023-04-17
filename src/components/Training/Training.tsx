@@ -73,16 +73,14 @@ const Training = () => {
         {/* テーブル */}
         <TableContainer
           component={Paper}
-          sx={{ width: "90%", margin: "0 auto" }}
+          sx={{ width: {xs: "100%", sm: "90%"}, margin: "0 auto" }}
         >
-          <Table aria-label="collapsible table">
+          <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontSize: "18px", letterSpacing: "1.5px" }}>
+                <TableCell sx={{ fontSize: "18px", letterSpacing: "1.5px",}}>
                   Training List
                 </TableCell>
-                <TableCell />
-                <TableCell />
                 <TableCell />
               </TableRow>
             </TableHead>
@@ -137,12 +135,11 @@ const Row = (props: any) => {
     <React.Fragment>
       <TableRow
         sx={{
-          "& > *": { borderBottom: "none", fontSize: "17px" },
+          "& > *": { borderBottom: "none", fontSize: {xs: "14px", sm: "17px"} },
         }}
       >
         <TableCell align="left">
           <IconButton
-            aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
           >
@@ -150,7 +147,7 @@ const Row = (props: any) => {
           </IconButton>
           {row.day}
         </TableCell>
-        <TableCell>
+        <TableCell align="right" sx={{borderBottom: "none"}}>
           <IconButton onClick={() => handleEditOpen(row)}>
             <EditIcon />
           </IconButton>
@@ -164,18 +161,18 @@ const Row = (props: any) => {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Table size="small" aria-label="purchases">
+              <Table size="small">
                 <TableHead>
-                  <TableRow>
-                    <TableCell>Menu</TableCell>
-                    <TableCell>Time</TableCell>
-                    <TableCell>Count</TableCell>
+                  <TableRow sx={{whiteSpace: "nowrap"}}>
+                    <TableCell sx={{ width: "55%" }}>Menu</TableCell>
+                    <TableCell sx={{ width: "15%" }}>Time</TableCell>
+                    <TableCell  sx={{ width: "30%" }}>Count</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.menu &&
                     row.menu.map((historyRow: any) => (
-                      <TableRow key={historyRow.name}>
+                      <TableRow key={historyRow.name} sx={{"& > *": {fontSize: {xs: "10px", sm: "14px"}}}}>
                         <TableCell component="th" scope="row">
                           {historyRow.name}
                         </TableCell>

@@ -1,22 +1,20 @@
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
 
-
-
-const ContentsCard = ({image, children}: any) => {
+const ContentsCard = ({ sx, image, children }: any) => {
   return (
-    <Card sx={{ width: 350, height: 350 }}>
+    <Card sx={{ width: 390, height: 370, borderRadius: "5px" }}>
       <CardMedia
-        sx={{ height: 210 }}
+        component="img"
+        sx={sx}
+        height="240"
         image={image}
-        title="contents image"
+        alt="contents image"
       />
-      <CardContent>
-        {children}
-      </CardContent>
+      <CardContent>{children}</CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default ContentsCard
+export default ContentsCard;

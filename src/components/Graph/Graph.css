@@ -19,6 +19,26 @@
   text-align: right;
   margin-top: 40px;
   margin-bottom: 30px;
+}
+
+.graph {
+  width: 100%;
+}
+
+.saveButton {
+  margin-bottom: 14px;
+}
+
+@media screen and (max-width:600px)  {
+  .container {
+    width: 100%;
+  }
+  .pageTitle {
+    font-size: 24px;
+  }
+  .graphButton {
+    text-align: center;
+  }
   
 }
 

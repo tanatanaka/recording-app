@@ -18,31 +18,12 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import MenuIcon from "@mui/icons-material/Menu";
 
-declare module '@mui/material/styles' {
-  interface BreakpointOverrides {
-    xs: true; 
-    sm: true;
-    md: true;
-    lg: true;
-    xl: true;
-  }
-}
-
 const theme = createTheme({
   palette: {
     primary: {
       main: "rgba(17, 81, 88, 0.8)",
     },
-  },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 500,
-      md: 850,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
+  }
 });
 
 const MenuBar = ({ children }: any) => {
@@ -68,7 +49,7 @@ const MenuBar = ({ children }: any) => {
               {/* PC ロゴ */}
               <Box
                 sx={{
-                  display: { xs: "none", md: "flex" },
+                  display: { xs: "none", sm: "flex" },
                 }}
               >
                 <Link to={"/"} className="logoLink">
@@ -78,7 +59,7 @@ const MenuBar = ({ children }: any) => {
               </Box>
 
               {/* SP メニューアイコン */}
-              <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+              <Box sx={{ flexGrow: 1, display: { xs: "flex", sm: "none" } }}>
                 <IconButton
                   size="large"
                   aria-label="account of current user"
@@ -104,13 +85,13 @@ const MenuBar = ({ children }: any) => {
                   open={Boolean(anchorElNav)}
                   onClose={handleCloseNavMenu}
                   sx={{
-                    display: { xs: "block", md: "none" },
+                    display: { xs: "block", sm: "none" },
                   }}
                 >
                   {pages.map((page) => (
                     <MenuItem key={page} onClick={handleCloseNavMenu}>
                       <Typography textAlign="center">
-                        <Link to={`/${page.toLowerCase()}/`}>{page}</Link>
+                        <Link to={`/${page.toLowerCase()}/`} className="spMenuLink">{page}</Link>
                       </Typography>
                     </MenuItem>
                   ))}
@@ -125,7 +106,7 @@ const MenuBar = ({ children }: any) => {
                 href=""
                 sx={{
                   mr: 2,
-                  display: { xs: "flex", md: "none" },
+                  display: { xs: "flex", sm: "none" },
                   flexGrow: 1,
                   fontFamily: "monospace",
                   fontWeight: 700,
@@ -141,7 +122,7 @@ const MenuBar = ({ children }: any) => {
               <Box
                 sx={{
                   flexGrow: 1,
-                  display: { xs: "none", md: "flex" },
+                  display: { xs: "none", sm: "flex" },
                   justifyContent: "end",
                   gap: "20px",
                   fontSize: "18px",
