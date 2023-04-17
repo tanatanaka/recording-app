@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
 import "./Top.css";
 import ContentsCard from "./ContentsCard";
 
@@ -19,61 +17,6 @@ const Top = () => {
 
         <div className="formBox">
           <Auth />
-          {/* <button
-            className={tab ? "selectTab" : "tabButton"}
-            onClick={() => setTab(true)}
-          >
-            Login
-          </button>
-          <button
-            className={tab ? "tabButton" : "selectTab"}
-            onClick={() => setTab(false)}
-          >
-            SignUp
-          </button>
-
-          {tab ? (
-            <form className="loginForm">
-              <input
-                type="email"
-                placeholder="email"
-                onChange={onChangeEmail}
-                value={email}
-              />
-              <input
-                type="password"
-                placeholder="password"
-                onChange={onChangePass}
-                value={pass}
-              />
-              {email && pass ? (
-                <button>Login</button>
-              ) : (
-                <button disabled>Login</button>
-              )}
-              <button>Google Account Login</button>
-            </form>
-          ) : (
-            <form className="signUpForm">
-              <input
-                type="email"
-                placeholder="email"
-                onChange={onChangeNewEmail}
-                value={newEmail}
-              />
-              <input
-                type="password"
-                placeholder="password"
-                onChange={onChangeNewPass}
-                value={newPass}
-              />
-              {newEmail && newPass ? (
-                <button>SignUp</button>
-              ) : (
-                <button disabled>SignUp</button>
-              )}
-            </form>
-          )} */}
         </div>
       </div>
 
@@ -87,7 +30,7 @@ const Top = () => {
             1. トレーニング記録管理
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            コンテンツ説明
+            トレーニングの内容を入力し、メニュー・時間・回数を日付ごとに管理できます！グラフとの併用で効果的なメニューの把握にも役立ちます。
           </Typography>
         </ContentsCard>
 
@@ -100,7 +43,7 @@ const Top = () => {
             2.  体重・体脂肪管理
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            コンテンツ説明
+            体重・体脂肪率を入力すると自動でグラフを作成します！細かな数値の変化を目視できるので、モチベーション維持に役立ちます。
           </Typography>
         </ContentsCard>
 
@@ -113,7 +56,7 @@ const Top = () => {
             3.  目標を登録できる
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            コンテンツ説明
+            目標となる日付・体重・体脂肪率を入力するとグラフのデータをもとに目標までの数値を表示します！目標に近づいているのが実感できます。
           </Typography>
         </ContentsCard>
       </div>
