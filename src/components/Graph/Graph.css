@@ -1,0 +1,45 @@
+.container {
+  box-sizing: border-box;
+  width: 80%;
+  height: calc(100vh - 65px);
+  background-color: #fff;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.pageTitle {
+  margin-top: 0;
+  padding-bottom: 5px;
+  border-bottom: 2px solid rgba(47, 132, 141, 0.8);
+  font-size: 30px;
+  color: rgba(62, 114, 127, 0.6);
+}
+
+.graphButton {
+  text-align: right;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.graph {
+  width: 100%;
+}
+
+.saveButton {
+  margin-bottom: 14px;
+}
+
+@media screen and (max-width:600px)  {
+  .container {
+    width: 100%;
+  }
+  .pageTitle {
+    font-size: 24px;
+  }
+  .graphButton {
+    text-align: center;
+  }
+  
+}
+
+

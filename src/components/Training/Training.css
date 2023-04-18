@@ -1,0 +1,73 @@
+.container {
+  box-sizing: border-box;
+  width: 80%;
+  height: 100%;
+  min-height: calc(100vh - 65px);
+  background-color: #fff;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.pageTitle {
+  margin-top: 0;
+  padding-bottom: 5px;
+  border-bottom: 2px solid rgba(47, 132, 141, 0.8);
+  font-size: 30px;
+  color: rgba(62, 114, 127, 0.6);
+}
+
+.button {
+  text-align: right;
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+.tableFlex{
+  display: flex;
+  justify-content: space-between;
+}
+
+.trainingList {
+  background-color: rgba(67, 113, 124, 0.295);
+  width: 500px;
+  padding: 10px;
+  color: #fff;
+  list-style: none;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.trainingList > li > button {
+  border: none;
+  background-color: rgba(62, 114, 127, 0);
+  opacity: 0.5;
+}
+
+.trainingList > li > button:hover {
+  opacity: 0.4;
+}
+
+span {
+  padding: 0 250px 10px 10px;
+  font-size: 18px;
+}
+
+.detailList {
+  margin-top: 15px;
+  margin-left: 45px;
+  font-size: 16px;
+}
+
+@media screen and (max-width:600px)  {
+  .container {
+    width: 100%;
+  }
+  .pageTitle {
+    font-size: 24px;
+    
+  }
+  .button {
+    text-align: center;
+  }
+}
