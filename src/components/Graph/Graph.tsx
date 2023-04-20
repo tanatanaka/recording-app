@@ -15,7 +15,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import { db } from "../../firebase";
+import { auth, db } from "../../firebase";
 import {
   addDoc,
   collection,
@@ -39,6 +39,8 @@ import {
   TimeScale,
 } from "chart.js";
 import BasicButton from "../Tools/BasicButton";
+import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 ChartJS.register(
   CategoryScale,
@@ -53,9 +55,25 @@ ChartJS.register(
 
 const Graph = () => {
   const [graphData, setGraphData] = useState<any>([]);
+  const [uid, setUid] = useState<string>("");
+  // ブレークポイント
+  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
+
+  const navigate = useNavigate();
+  
   useEffect(() => {
-    const data = collection(db, "graph");
-    const q = query(data, orderBy("date", "asc"));
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUid(user.uid);
+      } else {
+        navigate("/");
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (uid){
+      const q = query(collection(db, "users", uid, "graph"), orderBy("date", "asc"));
     onSnapshot(q, (snapshot: any) => {
       setGraphData(
         snapshot.docs.map((doc: any) => {
@@ -66,7 +84,8 @@ const Graph = () => {
         })
       );
     });
-  }, []);
+    }
+  }, [uid]);
 
   // Modalの開閉
   const [open, setOpen] = useState<boolean>(false);
@@ -77,9 +96,6 @@ const Graph = () => {
     setBodyFat(null);
     setOpen(false);
   };
-
-  // ブレークポイント
-  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
 
   const [date, setDate] = useState<any>(null);
   const [weight, setWeight] = useState<number | null>(null);
@@ -112,7 +128,7 @@ const Graph = () => {
 
   const handleSaveClick = async (e: any) => {
     e.preventDefault();
-    const updateData = doc(db, "graph", updateTarget && updateTarget.id);
+    const updateData = doc(db, "users", uid, "graph", updateTarget.id);
     await updateDoc(updateData, {
       date,
       weight,
@@ -122,7 +138,7 @@ const Graph = () => {
   };
 
   const handleCreateClick = async () => {
-    await addDoc(collection(db, "graph"), {
+    await addDoc(collection(db, "users", uid, "graph"), {
       date,
       weight,
       bodyFat,

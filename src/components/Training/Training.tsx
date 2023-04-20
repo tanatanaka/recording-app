@@ -29,11 +29,46 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { auth, db } from "../../firebase";
 import CreateForm from "./CreateForm";
 import EditForm from "./EditForm";
+import { onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const Training = () => {
+  const [uid, setUid] = useState<string>("");
+  // firebaseから取得したtrainingデータ
+  const [training, setTraining] = useState<any>([]);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUid(user.uid);
+      } else {
+        navigate("/");
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (uid) {
+      const trainingData = collection(db, "users", uid, "training");
+      const q = query(trainingData, orderBy("day", "desc"));
+      onSnapshot(q, (snapshot: any) => {
+        setTraining(
+          snapshot.docs.map((doc: any) => {
+            return {
+              id: doc.id,
+              ...doc.data(),
+            };
+          })
+        );
+      });
+    }
+  }, [uid]);
+
   // 登録用Modalの開閉
   const [openModal, setOpenModal] = useState(false);
   const handleOpen = () => setOpenModal(true);
@@ -43,23 +78,6 @@ const Training = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editTraining, setEditTraining] = useState({});
   const handleEditClose = () => setOpenEditModal(false);
-
-  // firebaseから取得したtrainingのstate
-  const [training, setTraining] = useState<any>([]);
-  useEffect(() => {
-    const trainingData = collection(db, "training");
-    const q = query(trainingData, orderBy("day", "desc"));
-    onSnapshot(q, (snapshot: any) => {
-      setTraining(
-        snapshot.docs.map((doc: any) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
-        })
-      );
-    });
-  }, []);
 
   return (
     <>
@@ -73,12 +91,12 @@ const Training = () => {
         {/* テーブル */}
         <TableContainer
           component={Paper}
-          sx={{ width: {xs: "100%", sm: "90%"}, margin: "0 auto" }}
+          sx={{ width: { xs: "100%", sm: "90%" }, margin: "0 auto" }}
         >
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontSize: "18px", letterSpacing: "1.5px",}}>
+                <TableCell sx={{ fontSize: "18px", letterSpacing: "1.5px" }}>
                   Training List
                 </TableCell>
                 <TableCell />
@@ -103,8 +121,9 @@ const Training = () => {
           </Table>
         </TableContainer>
 
-        <CreateForm openModal={openModal} handleClose={handleClose} />
+        <CreateForm uid={uid} openModal={openModal} handleClose={handleClose} />
         <EditForm
+          uid={uid}
           openEditModal={openEditModal}
           handleEditClose={handleEditClose}
           editTraining={editTraining}
@@ -135,19 +154,19 @@ const Row = (props: any) => {
     <React.Fragment>
       <TableRow
         sx={{
-          "& > *": { borderBottom: "none", fontSize: {xs: "14px", sm: "17px"} },
+          "& > *": {
+            borderBottom: "none",
+            fontSize: { xs: "14px", sm: "17px" },
+          },
         }}
       >
         <TableCell align="left">
-          <IconButton
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
+          <IconButton size="small" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
           {row.day}
         </TableCell>
-        <TableCell align="right" sx={{borderBottom: "none"}}>
+        <TableCell align="right" sx={{ borderBottom: "none" }}>
           <IconButton onClick={() => handleEditOpen(row)}>
             <EditIcon />
           </IconButton>
@@ -163,16 +182,21 @@ const Row = (props: any) => {
             <Box sx={{ margin: 1 }}>
               <Table size="small">
                 <TableHead>
-                  <TableRow sx={{whiteSpace: "nowrap"}}>
-                    <TableCell sx={{ width: "55%" }}>Menu</TableCell>
+                  <TableRow sx={{ whiteSpace: "nowrap" }}>
+                    <TableCell sx={{ width: "70%" }}>Menu</TableCell>
                     <TableCell sx={{ width: "15%" }}>Time</TableCell>
-                    <TableCell  sx={{ width: "30%" }}>Count</TableCell>
+                    <TableCell sx={{ width: "15%" }}>Count</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.menu &&
                     row.menu.map((historyRow: any) => (
-                      <TableRow key={historyRow.name} sx={{"& > *": {fontSize: {xs: "10px", sm: "14px"}}}}>
+                      <TableRow
+                        key={historyRow.name}
+                        sx={{
+                          "& > *": { fontSize: { xs: "10px", sm: "14px" } },
+                        }}
+                      >
                         <TableCell component="th" scope="row">
                           {historyRow.name}
                         </TableCell>

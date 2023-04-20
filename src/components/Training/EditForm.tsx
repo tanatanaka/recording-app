@@ -21,7 +21,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const EditForm = (props: any) => {
-  const { openEditModal, handleEditClose, editTraining } = props;
+  const { uid, openEditModal, handleEditClose, editTraining } = props;
 
   // ブレークポイント
   const breakPoint: boolean = useMediaQuery("(max-width:600px)");
@@ -70,7 +70,7 @@ const EditForm = (props: any) => {
 
   const handleSaveClick = async (e: any) => {
     e.preventDefault();
-    const updatedTraining = doc(db, "training", editTraining.id);
+    const updatedTraining = doc(db, "users", uid, "training", editTraining.id);
     await updateDoc(updatedTraining, {
       day,
       menu: [...editedMenu],

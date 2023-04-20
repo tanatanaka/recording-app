@@ -1,15 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithRedirect,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../firebase";
+import { auth, provider } from "../../firebase";
+import { uid } from "chart.js/dist/helpers/helpers.core";
 
 const Auth = () => {
   const navigate = useNavigate();
   const [tab, setTab] = useState<boolean>(true);
   const [error, setError] = useState("");
+  const [loginMessage, setLoginMessage] = useState("");
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/mypage/");
+        const uid = user.uid;
+        console.log(uid);
+      }
+    });
+  }, []);
 
   // Login機能
   // emailの入力値のstate
@@ -50,6 +64,11 @@ const Auth = () => {
     setPass("");
   };
 
+  const googleLogin = (e: any) => {
+    e.preventDefault();
+    signInWithRedirect(auth, provider);
+  };
+
   // SignUp機能
   // emailの入力値
   const [newEmail, setNewEmail] = useState<string>("");
@@ -68,7 +87,11 @@ const Auth = () => {
   const handleSignUpSubmit = (e: any) => {
     e.preventDefault();
     createUserWithEmailAndPassword(auth, newEmail, newPass)
-      .then(() => navigate("/"))
+      .then(() => {
+        navigate("/")
+        setLoginMessage("登録完了！ログインしてください")
+        setTab(true);
+      })
       .catch((error) => {
         switch (error.code) {
           case "auth/invalid-email":
@@ -118,13 +141,15 @@ const Auth = () => {
             onChange={onChangePass}
             value={pass}
           />
-          {error && <p className="error">{error}</p>}
+          {loginMessage && <p>{loginMessage}</p>}
+          {error &&
+          <p className="error">{error}</p>}
           {email && pass ? (
             <button>Login</button>
           ) : (
             <button disabled>Login</button>
           )}
-          <button>Google Account Login</button>
+          <button onClick={googleLogin}>Google Account Login</button>
         </form>
       ) : (
         <form onSubmit={handleSignUpSubmit} className="signUpForm">

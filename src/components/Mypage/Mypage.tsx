@@ -14,12 +14,14 @@ import {
   addDoc,
   collection,
   doc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
   updateDoc,
+  where,
 } from "firebase/firestore";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -59,12 +61,12 @@ const Mypage = () => {
     setGoalDay(dayjs(e).format("YYYY/MM/DD"));
   };
 
-  const goalWeightChange = (e: any) => {
+  const goalWeightChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     e.preventDefault();
     setGoalWeight(parseFloat(e.target.value));
   };
 
-  const goalBodyFatChange = (e: any) => {
+  const goalBodyFatChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     e.preventDefault();
     setGoalBodyFat(parseFloat(e.target.value));
   };
@@ -73,39 +75,53 @@ const Mypage = () => {
   const [goal, setGoal] = useState<any>(undefined);
   // 現在
   const [now, setNow] = useState<any>(undefined);
+  // ユーザーID
+  const [uid, setUid] = useState<string>("");
 
   useEffect(() => {
-    // 目標データ取得
-    const goalData = collection(db, "goals");
-    const goalQuery = query(goalData);
-    onSnapshot(goalQuery, (snapshot: any) => {
-      const getGoal = snapshot.docs.map((doc: any) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
-      setGoal(getGoal && getGoal[0]);
-    });
-
-    // graphの最新データのみ取得
-    const nowData = collection(db, "graph");
-    const graphQuery = query(nowData, orderBy("date", "desc"));
-    onSnapshot(graphQuery, (snapshot: any) => {
-      const getNow = snapshot.docs.map((doc: any) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
-      setNow(getNow && getNow.shift());
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUid(user.uid);
+      } else {
+        navigate("/");
+      }
     });
   }, []);
+
+  useEffect(() => {
+    if (uid) {
+      // 目標データ取得
+      onSnapshot(collection(db, "users", uid, "goals"), (snapshot: any) => {
+        const getGoal = snapshot.docs.map((doc: any) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          };
+        });
+        setGoal(getGoal && getGoal[0]);
+      });
+
+      // graphの最新データのみ取得
+      const graphQuery = query(
+        collection(db, "users", uid, "graph"),
+        orderBy("date", "desc")
+      );
+      onSnapshot(graphQuery, (snapshot: any) => {
+        const getNow = snapshot.docs.map((doc: any) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          };
+        });
+        setNow(getNow && getNow.shift());
+      });
+    }
+  }, [uid]);
 
   // データがあれば上書き、なければ新規保存
   const handleSaveClick = async (e: any) => {
     e.preventDefault();
-    const updateGoals = doc(db, "goals", goal && goal.id);
+    const updateGoals = doc(db, "users", uid, "goals", goal.id);
     await updateDoc(updateGoals, {
       startDay,
       goalDay,
@@ -116,7 +132,7 @@ const Mypage = () => {
   };
 
   const handleCreateClick = async () => {
-    await addDoc(collection(db, "goals"), {
+    await addDoc(collection(db, "users", uid, "goals"), {
       startDay,
       goalDay,
       goalWeight,
@@ -135,16 +151,17 @@ const Mypage = () => {
     const formatGoalDate = goalDate.format("YYYY/MM/DD");
     const sameDate = formatNowDate === formatGoalDate;
     const date = goalDate.diff(nowDate, "day", false);
-    if (date < 0) {
-      return "目標の日を過ぎました！";
+
+    if (!date || !goal) {
+      return <p className="changeGoalfont">目標達成したい日が未登録です</p>;
     } else if (sameDate) {
-      return "目標の日になりました！";
+      return <p className="changeGoalfont">目標の日になりました！</p>;
     } else if (date === 0) {
-      return `${date + 1} 日`;
-    } else if (!date) {
-      return "目標達成したい日が未登録です";
+      return <p>{`${date + 1} 日`}</p>;
+    } else if (date < 0) {
+      return <p className="changeGoalfont">目標の日を過ぎました</p>;
     } else {
-      return `${date + 1} 日`;
+      return <p>{`${date + 1} 日`}</p>;
     }
   };
 
@@ -153,12 +170,12 @@ const Mypage = () => {
     const goalWeight = goal ? goal.goalWeight : false;
     const w = nowWeight - goalWeight;
     const weight = parseFloat(w.toFixed(1));
-    if (!weight || !nowWeight || !goalWeight) {
-      return "目標または現在の数値が登録されていません";
+    if (!nowWeight || !goalWeight) {
+      return <p className="changeGoalfont">目標または現在の数値が未登録です</p>;
     } else if (w <= 0) {
-      return "目標達成！！";
+      return <p>目標達成！！</p>;
     } else {
-      return `${weight} kg`;
+      return <p>{`${weight} kg`}</p>;
     }
   };
 
@@ -168,11 +185,11 @@ const Mypage = () => {
     const f = nowBodyFat - goalBodyFat;
     const bodyFat = parseFloat(f.toFixed(1));
     if (!bodyFat || !nowBodyFat || !goalBodyFat) {
-      return "目標または現在の数値が登録されていません";
+      return <p className="changeGoalfont">目標または現在の数値が未登録です</p>;
     } else if (f <= 0) {
-      return "目標達成！！";
+      return <p>目標達成！！</p>;
     } else {
-      return `${bodyFat} %`;
+      return <p>{`${bodyFat} %`}</p>;
     }
   };
   const dateDiff = calcDateDiff();
@@ -181,8 +198,8 @@ const Mypage = () => {
 
   // ログアウト
   const navigate = useNavigate();
-  const handleLogout = () => {
-    signOut(auth);
+  const handleLogout = async () => {
+    await signOut(auth);
     navigate("/");
   };
 
@@ -207,7 +224,10 @@ const Mypage = () => {
             <Box
               component="form"
               sx={{
-                "& > :not(style)": { m: 1, width: {xs: "180px", sm: "265px"}  },
+                "& > :not(style)": {
+                  m: 1,
+                  width: { xs: "180px", sm: "265px" },
+                },
               }}
             >
               <LocalizationProvider
@@ -239,7 +259,7 @@ const Mypage = () => {
                 label="目標体重"
                 variant="outlined"
                 type="number"
-                onChange={goalWeightChange}
+                onChange={(e)=>goalWeightChange(e)}
               />
               <TextField
                 label="目標体脂肪率"
@@ -276,7 +296,6 @@ const Mypage = () => {
         </Modal>
 
         <div className="flexBox">
-          {/* 目標 */}
           <div className="goalBox">
             <dl>
               <div className="goals">
@@ -301,9 +320,9 @@ const Mypage = () => {
           <div className="goalBox">
             <h2>目標まであと・・・</h2>
             <div className="achieveGoal">
-              <p>{dateDiff}</p>
-              <p>{weightDiff}</p>
-              <p>{bodyFatDiff}</p>
+              {dateDiff}
+              {weightDiff}
+              {bodyFatDiff}
             </div>
           </div>
         </div>
