@@ -69,18 +69,31 @@ dd {
   text-align: right;
 }
 
+.changeGoalfont {
+  font-size: 20px;
+}
+
 .logout {
   text-align: center;
   margin-top: 50px;
 }
 
-@media screen and (max-width:950px)  {
+@media screen and (max-width:1220px) {
+  .changeGoalfont {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width:990px)  {
   .flexBox {
     flex-direction: column;
     align-items: center;
   }
   .goalBox {
     width: 80%;
+  }
+  .changeGoalfont {
+    font-size: 20px;
   }
 }
 
@@ -93,5 +106,16 @@ dd {
   }
   .button {
     text-align: center;
+  }
+  dt,
+  .goalBox > h2 {
+    font-size: 18px;
+  }
+  dd,
+  .changeGoalfont {
+    font-size: 16px;
+  }
+  .goalBox {
+    height: 70%;
   }
 }
