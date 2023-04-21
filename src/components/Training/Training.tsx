@@ -1,6 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+
 import "./Training.css";
 import Menu from "../Menu/MenuBar";
+import { auth, db } from "../../firebase";
+import CreateForm from "./CreateForm";
+import EditForm from "./EditForm";
 
 import {
   Box,
@@ -14,33 +29,20 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BasicButton from "../Tools/BasicButton";
 
-import {
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import { auth, db } from "../../firebase";
-import CreateForm from "./CreateForm";
-import EditForm from "./EditForm";
-import { onAuthStateChanged } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-
 const Training = () => {
-  const [uid, setUid] = useState<string>("");
-  // firebaseから取得したtrainingデータ
-  const [training, setTraining] = useState<any>([]);
 
-  const navigate = useNavigate();
+  const [uid, setUid] = useState<string>("");
+  const [training, setTraining] = useState<any>([]);
+  const [openModal, setOpenModal] = useState(false);
+
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [editTraining, setEditTraining] = useState({});
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -68,15 +70,13 @@ const Training = () => {
       });
     }
   }, [uid]);
+  
+  const navigate = useNavigate();
 
-  // 登録用Modalの開閉
-  const [openModal, setOpenModal] = useState(false);
   const handleOpen = () => setOpenModal(true);
-  const handleClose = () => setOpenModal(false);
 
-  // 編集用Modalの開閉
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [editTraining, setEditTraining] = useState({});
+  const handleClose = () => setOpenModal(false);
+ 
   const handleEditClose = () => setOpenEditModal(false);
 
   return (
