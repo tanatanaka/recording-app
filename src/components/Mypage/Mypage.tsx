@@ -1,29 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
+import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
+
 import BasicButton from "../Tools/BasicButton";
 import Menu from "../Menu/MenuBar";
 import "./Mypage.css";
 import { ModalStyle, SpModalStyle } from "../Tools/ModalStyle";
-import dayjs from "dayjs";
-
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
 import { auth, db } from "../../firebase";
+
 import {
   addDoc,
   collection,
   doc,
-  getDocs,
   onSnapshot,
   orderBy,
   query,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
   Box,
   Typography,
@@ -33,50 +31,20 @@ import {
 } from "@mui/material";
 
 const Mypage = () => {
-  // Modalの開閉
   const [open, setOpen] = useState<boolean>(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setStartDay(null);
-    setGoalDay(null);
-    setGoalWeight(null);
-    setGoalBodyFat(null);
-    setOpen(false);
-  };
 
-  // ブレークポイント
-  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
-
-  // 目標入力フォーム
   const [startDay, setStartDay] = useState<any>(null);
   const [goalDay, setGoalDay] = useState<any>(null);
   const [goalWeight, setGoalWeight] = useState<number | null>(null);
   const [goalBodyFat, setGoalBodyFat] = useState<number | null>(null);
 
-  const startDayChange = (e: any) => {
-    setStartDay(dayjs(e).format("YYYY/MM/DD"));
-  };
-
-  const goalDayChange = (e: any) => {
-    setGoalDay(dayjs(e).format("YYYY/MM/DD"));
-  };
-
-  const goalWeightChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    e.preventDefault();
-    setGoalWeight(parseFloat(e.target.value));
-  };
-
-  const goalBodyFatChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    e.preventDefault();
-    setGoalBodyFat(parseFloat(e.target.value));
-  };
-
-  // 目標
   const [goal, setGoal] = useState<any>(undefined);
-  // 現在
   const [now, setNow] = useState<any>(undefined);
-  // ユーザーID
   const [uid, setUid] = useState<string>("");
+
+  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -90,7 +58,6 @@ const Mypage = () => {
 
   useEffect(() => {
     if (uid) {
-      // 目標データ取得
       onSnapshot(collection(db, "users", uid, "goals"), (snapshot: any) => {
         const getGoal = snapshot.docs.map((doc: any) => {
           return {
@@ -101,7 +68,6 @@ const Mypage = () => {
         setGoal(getGoal && getGoal[0]);
       });
 
-      // graphの最新データのみ取得
       const graphQuery = query(
         collection(db, "users", uid, "graph"),
         orderBy("date", "desc")
@@ -118,7 +84,32 @@ const Mypage = () => {
     }
   }, [uid]);
 
-  // データがあれば上書き、なければ新規保存
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => {
+    setStartDay(null);
+    setGoalDay(null);
+    setGoalWeight(null);
+    setGoalBodyFat(null);
+    setOpen(false);
+  };  
+
+  const startDayChange = (e: any) => {
+    setStartDay(dayjs(e).format("YYYY/MM/DD"));
+  };
+
+  const goalDayChange = (e: any) => {
+    setGoalDay(dayjs(e).format("YYYY/MM/DD"));
+  };
+
+  const goalWeightChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    setGoalWeight(parseFloat(e.target.value));
+  };
+
+  const goalBodyFatChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    setGoalBodyFat(parseFloat(e.target.value));
+  };
+
   const handleSaveClick = async (e: any) => {
     e.preventDefault();
     const updateGoals = doc(db, "users", uid, "goals", goal.id);
@@ -196,8 +187,6 @@ const Mypage = () => {
   const weightDiff = calcWeightDiff();
   const bodyFatDiff = calcBodyFatDiff();
 
-  // ログアウト
-  const navigate = useNavigate();
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/");
