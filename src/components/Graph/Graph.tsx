@@ -1,31 +1,6 @@
-import { useEffect, useState } from "react";
-import Menu from "../Menu/MenuBar";
-import "./Graph.css";
-import { ModalStyle, SpModalStyle } from "../Tools/ModalStyle";
+import { useEffect, useState, ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-
-import {
-  Box,
-  Typography,
-  Modal,
-  TextField,
-  useMediaQuery,
-} from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
-import { auth, db } from "../../firebase";
-import {
-  addDoc,
-  collection,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  updateDoc,
-} from "firebase/firestore";
-
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -38,9 +13,34 @@ import {
   Legend,
   TimeScale,
 } from "chart.js";
+
+import { auth, db } from "../../firebase";
+import Menu from "../Menu/MenuBar";
+import "./Graph.css";
+import { ModalStyle, SpModalStyle } from "../Tools/ModalStyle";
 import BasicButton from "../Tools/BasicButton";
+
 import { onAuthStateChanged } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  updateDoc,
+} from "firebase/firestore";
+
+import {
+  Box,
+  Typography,
+  Modal,
+  TextField,
+  useMediaQuery,
+} from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 ChartJS.register(
   CategoryScale,
@@ -54,13 +54,20 @@ ChartJS.register(
 );
 
 const Graph = () => {
-  const [graphData, setGraphData] = useState<any>([]);
   const [uid, setUid] = useState<string>("");
-  // ブレークポイント
+  const [open, setOpen] = useState<boolean>(false);
+  const [graphData, setGraphData] = useState<any>([]);
+
+  const [date, setDate] = useState<any>(null);
+  const [weight, setWeight] = useState<number | null>(null);
+  const [bodyFat, setBodyFat] = useState<number | null>(null);
+  const [updateButton, setUpdateButton] = useState<boolean>(false);
+  const [updateTarget, setUpdateTarget] = useState<any>(undefined);
+
   const breakPoint: boolean = useMediaQuery("(max-width:600px)");
 
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -72,36 +79,32 @@ const Graph = () => {
   }, []);
 
   useEffect(() => {
-    if (uid){
-      const q = query(collection(db, "users", uid, "graph"), orderBy("date", "asc"));
-    onSnapshot(q, (snapshot: any) => {
-      setGraphData(
-        snapshot.docs.map((doc: any) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
-        })
+    if (uid) {
+      const q = query(
+        collection(db, "users", uid, "graph"),
+        orderBy("date", "asc")
       );
-    });
+      onSnapshot(q, (snapshot: any) => {
+        setGraphData(
+          snapshot.docs.map((doc: any) => {
+            return {
+              id: doc.id,
+              ...doc.data(),
+            };
+          })
+        );
+      });
     }
   }, [uid]);
 
-  // Modalの開閉
-  const [open, setOpen] = useState<boolean>(false);
   const handleOpen = () => setOpen(true);
+
   const handleClose = () => {
     setDate(null);
     setWeight(null);
     setBodyFat(null);
     setOpen(false);
   };
-
-  const [date, setDate] = useState<any>(null);
-  const [weight, setWeight] = useState<number | null>(null);
-  const [bodyFat, setBodyFat] = useState<number | null>(null);
-  const [updateButton, setUpdateButton] = useState<boolean>(false);
-  const [updateTarget, setUpdateTarget] = useState<any>(undefined);
 
   const dateChange = (e: any) => {
     const inputDate = dayjs(e).format("YYYY-MM-DD");
@@ -116,13 +119,15 @@ const Graph = () => {
     }
   };
 
-  const weightChange = (e: any) => {
-    e.preventDefault();
+  const weightChange = (
+    e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
     setWeight(parseFloat(e.target.value));
   };
 
-  const bodyFatChange = (e: any) => {
-    e.preventDefault();
+  const bodyFatChange = (
+    e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
     setBodyFat(parseFloat(e.target.value));
   };
 
@@ -149,7 +154,7 @@ const Graph = () => {
   const options: any = {
     responsive: true,
     interaction: {
-      mode: "index" as const,
+      mode: "index",
       intersect: false,
     },
     stacked: true,
@@ -160,14 +165,14 @@ const Graph = () => {
     },
     scales: {
       weight: {
-        type: "linear" as const,
+        type: "linear",
         display: true,
-        position: "left" as const,
+        position: "left",
       },
       bodyFat: {
-        type: "linear" as const,
+        type: "linear",
         display: true,
-        position: "right" as const,
+        position: "right",
         grid: {
           drawOnChartArea: false,
         },
