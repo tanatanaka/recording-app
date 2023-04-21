@@ -1,6 +1,6 @@
-import React from "react";
-import "./MenuBar.css";
+import { useState, MouseEvent } from "react";
 import { Link } from "react-router-dom";
+import "./MenuBar.css";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
@@ -23,17 +23,16 @@ const theme = createTheme({
     primary: {
       main: "rgba(17, 81, 88, 0.8)",
     },
-  }
+  },
 });
 
 const MenuBar = ({ children }: any) => {
-  const pages = ["Training", "Graph", "MyPage"];
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
+  const pages = ["Training", "Graph", "MyPage"];
+
+  const handleOpenNavMenu = (e: MouseEvent<HTMLElement>) => {
+    setAnchorElNav(e.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
@@ -91,7 +90,12 @@ const MenuBar = ({ children }: any) => {
                   {pages.map((page) => (
                     <MenuItem key={page} onClick={handleCloseNavMenu}>
                       <Typography textAlign="center">
-                        <Link to={`/${page.toLowerCase()}/`} className="spMenuLink">{page}</Link>
+                        <Link
+                          to={`/${page.toLowerCase()}/`}
+                          className="spMenuLink"
+                        >
+                          {page}
+                        </Link>
                       </Typography>
                     </MenuItem>
                   ))}
@@ -151,3 +155,4 @@ const MenuBar = ({ children }: any) => {
 };
 
 export default MenuBar;
+
