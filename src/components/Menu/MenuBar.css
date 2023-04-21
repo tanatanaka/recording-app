@@ -1,0 +1,59 @@
+body {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(to top, rgba(220, 186, 220, 0.6) 0%, rgba(47, 132, 141, 0.8) 100%);
+  background-attachment: fixed;
+}
+
+.header {
+  display: flex;
+  height: 65px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logoLink > h6,
+.logoLink > p {
+  margin: 0;
+  padding: 0;
+  letter-spacing: 1px;
+}
+
+.logoLink > h6 {
+  font-size: 24px;
+  font-weight: 300;
+}
+
+.logoLink > p {
+  letter-spacing: 1px;
+}
+
+.logoLink {
+  text-decoration: none;
+  color: rgba(255,255,255,0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.linkColor {
+  text-decoration: none;
+  color: rgba(255,255,255,0.6);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 18px;
+}
+
+.menu {
+  display: flex;
+  justify-content: center;
+}
+
+.spMenuLink {
+  text-decoration: none;
+  color: rgba(17, 81, 88, 0.8);
+}

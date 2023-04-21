@@ -1,0 +1,121 @@
+.container {
+  box-sizing: border-box;
+  width: 80%;
+  height: calc(100vh - 65px);
+  background-color: #fff;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.pageTitle {
+  margin-top: 0;
+  padding-bottom: 5px;
+  border-bottom: 2px solid rgba(47, 132, 141, 0.8);
+  font-size: 30px;
+  color: rgba(62, 114, 127, 0.6);
+}
+
+.button {
+  text-align: right;
+  margin-top: 40px;
+}
+
+.flexBox {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.goalBox {
+  width: 35%;
+  height: 416px;
+  padding: 30px;
+  border: 1px solid rgba(47, 132, 141, 0.8);
+  border-radius: 5px;
+}
+
+.goals {
+  height: 104px;
+}
+
+dt {
+  font-size: 22px;
+  color: rgba(47, 132, 141, 0.8);
+  border-bottom: 1px solid;
+}
+
+dd {
+  margin: 18px 0;
+  text-align: right;
+  font-size: 24px;
+  color: rgba(62, 114, 127, 0.6);
+}
+
+.goalBox > h2 {
+  font-weight: 300;
+  font-size: 25px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  color: rgba(47, 132, 141, 0.8);
+}
+
+.achieveGoal {
+  color: rgba(62, 114, 127, 0.6);
+  font-size: 25px;
+}
+
+.achieveGoal > p {
+  margin: calc(226px / 4) auto;
+  text-align: right;
+}
+
+.changeGoalfont {
+  font-size: 20px;
+}
+
+.logout {
+  text-align: center;
+  margin-top: 50px;
+}
+
+@media screen and (max-width:1220px) {
+  .changeGoalfont {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width:990px)  {
+  .flexBox {
+    flex-direction: column;
+    align-items: center;
+  }
+  .goalBox {
+    width: 80%;
+  }
+  .changeGoalfont {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width:600px)  {
+  .container {
+    width: 100%;
+  }
+  .pageTitle {
+    font-size: 24px;
+  }
+  .button {
+    text-align: center;
+  }
+  dt,
+  .goalBox > h2 {
+    font-size: 18px;
+  }
+  dd,
+  .changeGoalfont {
+    font-size: 16px;
+  }
+  .goalBox {
+    height: 70%;
+  }
+}
