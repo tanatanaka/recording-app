@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -7,10 +7,18 @@ import {
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, provider } from "../../firebase";
-import { uid } from "chart.js/dist/helpers/helpers.core";
 
 const Auth = () => {
   const navigate = useNavigate();
+
+  // ログイン
+  const [email, setEmail] = useState<string>("");
+  const [pass, setPass] = useState<string>("");
+
+  // サインアップ
+  const [newEmail, setNewEmail] = useState<string>("");
+  const [newPass, setNewPass] = useState<string>("");
+
   const [tab, setTab] = useState<boolean>(true);
   const [error, setError] = useState("");
   const [loginMessage, setLoginMessage] = useState("");
@@ -19,28 +27,21 @@ const Auth = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         navigate("/mypage/");
-        const uid = user.uid;
-        console.log(uid);
       }
     });
   }, []);
-
-  // Login機能
-  // emailの入力値のstate
-  const [email, setEmail] = useState<string>("");
-  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+  
+  const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setEmail(e.target.value);
   };
 
-  // passwordの入力値のstate
-  const [pass, setPass] = useState<string>("");
-  const onChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangePass = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setPass(e.target.value);
   };
 
-  const handleLoginSubmit = async (e: any) => {
+  const handleLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, pass)
       .then(() => navigate("/mypage/"))
@@ -69,22 +70,17 @@ const Auth = () => {
     signInWithRedirect(auth, provider);
   };
 
-  // SignUp機能
-  // emailの入力値
-  const [newEmail, setNewEmail] = useState<string>("");
-  const onChangeNewEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeNewEmail = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setNewEmail(e.target.value);
   };
 
-  // passwordの入力値
-  const [newPass, setNewPass] = useState<string>("");
-  const onChangeNewPass = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeNewPass = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setNewPass(e.target.value);
   };
 
-  const handleSignUpSubmit = (e: any) => {
+  const handleSignUpSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     createUserWithEmailAndPassword(auth, newEmail, newPass)
       .then(() => {
@@ -141,9 +137,9 @@ const Auth = () => {
             onChange={onChangePass}
             value={pass}
           />
-          {loginMessage && <p>{loginMessage}</p>}
+          {loginMessage && <p className="message">{loginMessage}</p>}
           {error &&
-          <p className="error">{error}</p>}
+          <p className="message">{error}</p>}
           {email && pass ? (
             <button>Login</button>
           ) : (
