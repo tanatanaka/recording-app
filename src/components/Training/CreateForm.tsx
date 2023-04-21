@@ -1,21 +1,20 @@
 import { useState } from "react";
-import { TrainingFormModalStyle, SpTrainingFormModalStyle } from "../Tools/ModalStyle"
+import dayjs from "dayjs";
 import { addDoc, collection } from "firebase/firestore";
+
+import { TrainingFormModalStyle, SpTrainingFormModalStyle } from "../Tools/ModalStyle"
 import { db } from "../../firebase";
 import BasicButton from "../Tools/BasicButton";
+
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { Box, TextField, Typography, IconButton, Modal, useMediaQuery } from "@mui/material";
-import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const CreateForm = (props: any) => {
   const { uid, openModal, handleClose } = props;
-  // ブレークポイント
-  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
 
-  // トレーニング入力フォーム
   const [day, setDay] = useState<any>(null);
   const [menu, setMenu] = useState([
     {
@@ -24,6 +23,8 @@ const CreateForm = (props: any) => {
       count: "",
     },
   ]);
+  
+  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
 
   const dayChange = (e: any) => {
     setDay(dayjs(e).format("YYYY/MM/DD"));
@@ -180,3 +181,4 @@ const CreateForm = (props: any) => {
 };
 
 export default CreateForm;
+
