@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
+import dayjs from "dayjs";
+
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+
 import {
   TrainingFormModalStyle,
   SpTrainingFormModalStyle,
 } from "../Tools/ModalStyle";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
 import BasicButton from "../Tools/BasicButton";
+
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import {
@@ -16,19 +20,16 @@ import {
   Modal,
   useMediaQuery,
 } from "@mui/material";
-import dayjs from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const EditForm = (props: any) => {
   const { uid, openEditModal, handleEditClose, editTraining } = props;
 
-  // ブレークポイント
-  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
-
-  // トレーニング編集フォーム
   const [day, setDay] = useState<any>(editTraining.day);
   const [editedMenu, setEditedMenu] = useState<any>(editTraining.menu);
+
+  const breakPoint: boolean = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
     setDay(editTraining.day);
