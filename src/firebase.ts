@@ -13,8 +13,10 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_REACT_APP_FIREBASE_APP_ID
 };
 
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-export const db = getFirestore(app);
-export const auth = getAuth();
-export const provider = new GoogleAuthProvider();
+const db = getFirestore(app);
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
+
+export default { db, auth, provider }
