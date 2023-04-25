@@ -1,45 +1,81 @@
+# トレコード(トレーニング・体重管理アプリ) 
+  
+  
+## アプリ URL
+https://recording-app.vercel.app/
+
+## アプリ概要
+健康や美容のためにトレーニングをする方が、日々のトレーニング・体重・体脂肪率を簡単に記録し管理できるアプリです。
+目標を設定することが可能なため、ゴールまでの日数や数値も明確にできます。
+  
+
+## アプリを作成した背景
+美容目的で様々な運動に取り組んできましたが、その中で下記の悩みを持つようになりました。
+1. 毎日同じトレーニングをしているわけではなかったため、トレーニングの種類、効果の出方、数値の変化の仕方などが分かりにくく自分に合うトレーニングの選定がしにくい。
+2. 体重や体脂肪率の変化がスローペースであったため、変化を実感しにくくモチベーション維持が難しい。
+3. 長期的になると目標を決めていても近づいている感覚がない。
+
+そのため、トレーニングや数値を記録した上で、グラフにして推移を可視化し、目標までの数値をカウントダウンのように見ることができれば解決できると感じました。
+同じような悩みを持つ方の手助けができればと思い、開発に至りました。
+
+  
+## テスト用アカウント
+* メールアドレス：test@test.com
+* パスワード　　：testuser
+
+  
+## PC画面
+| トップページ  | マイページ |  グラフ |
+| ------------- | ------------- | ------------- |
+|<img width="1128" alt="スクリーンショット 2023-04-25 225731" src="https://user-images.githubusercontent.com/123450999/234304998-090da12a-e758-4afa-91dd-b03d133394b7.png"> | <img width="1128" alt="スクリーンショット 2023-04-25 224717" src="https://user-images.githubusercontent.com/123450999/234305196-6c6863ab-c802-4a58-bbbf-212dad835d72.png"> | <img width="1128" alt="スクリーンショット 2023-04-25 224810" src="https://user-images.githubusercontent.com/123450999/234305903-0531644a-a9c5-463f-9332-9e62bd197bdc.png"> |
 
 
-## Available Scripts
 
 
-In the project directory, you can run:
+| トレーニング一覧 | トレーニング登録・編集 |
+| ------------- | ------------- |
+| <img width="1128" alt="スクリーンショット 2023-04-25 225209" src="https://user-images.githubusercontent.com/123450999/234306816-09767ed1-f0fe-4d10-b300-00a3aada992b.png">
+|  <img width="450" alt="スクリーンショット 2023-04-25 225232" src="https://user-images.githubusercontent.com/123450999/234306872-e78d69fd-9914-44a1-91b5-dfd142131704.png">
+|
 
-### `npm start`
+## モバイル画面
+|  |  |
+| ------------- | ------------- |
+| | |
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+  
+## 機能一覧
+* 認証（サインアップ/ログイン/ログアウト）
+* 各種データ登録/編集･更新/削除
+* トレーニング一覧
+* チャート（グラフデータ）
+* 目標までの数値一覧
+  
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 実装予定の機能
+* パスワードリセット機能
+* ヘルプ(使い方)ボタンの作成
+* グラフ・トレーニングの月単位選択表示
+  
 
-### `npm test`
+## 開発環境
+### フロントエンド
+* React(v18.2.0)
+* Typescript
+* day.js(v1.11.7)
+* chart.js(v4.2.1)
+* react-chartjs-2(v5.2.0)
+* Material UI
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  
+### バックエンド
+* Firebase (v9.19.1)
 
-### `npm run build`
+  
+### デプロイ
+* Vercel
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+  
+## 工夫した点
+* トレーニング登録・編集の際にボタンクリックで入力フォームの増減が出来るように実装しました。
+* 体重と体脂肪率を一つのグラフにまとめ、推移を一目見て分かるように実装しました。
