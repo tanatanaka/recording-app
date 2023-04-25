@@ -25,23 +25,25 @@ https://recording-app.vercel.app/
 
   
 ## PC画面
-| トップページ  | マイページ |  グラフ |
-| ------------- | ------------- | ------------- |
-|<img width="1128" alt="スクリーンショット 2023-04-25 225731" src="https://user-images.githubusercontent.com/123450999/234304998-090da12a-e758-4afa-91dd-b03d133394b7.png"> | <img width="1128" alt="スクリーンショット 2023-04-25 224717" src="https://user-images.githubusercontent.com/123450999/234305196-6c6863ab-c802-4a58-bbbf-212dad835d72.png"> | <img width="1128" alt="スクリーンショット 2023-04-25 224810" src="https://user-images.githubusercontent.com/123450999/234305903-0531644a-a9c5-463f-9332-9e62bd197bdc.png"> |
-
-
-
-
-| トレーニング一覧 | トレーニング登録・編集 |
+| トップページ  | マイページ |
 | ------------- | ------------- |
-| <img width="1128" alt="スクリーンショット 2023-04-25 225209" src="https://user-images.githubusercontent.com/123450999/234306816-09767ed1-f0fe-4d10-b300-00a3aada992b.png">
-|  <img width="450" alt="スクリーンショット 2023-04-25 225232" src="https://user-images.githubusercontent.com/123450999/234306872-e78d69fd-9914-44a1-91b5-dfd142131704.png">
-|
+|<img width="1128" alt="スクリーンショット 2023-04-25 225731" src="https://user-images.githubusercontent.com/123450999/234304998-090da12a-e758-4afa-91dd-b03d133394b7.png"> | <img width="1128" alt="スクリーンショット 2023-04-25 224717" src="https://user-images.githubusercontent.com/123450999/234305196-6c6863ab-c802-4a58-bbbf-212dad835d72.png"> |
+
+
+| トレーニング一覧 | グラフ |
+| ------------- | ------------- |
+| <img width="1128" alt="スクリーンショット 2023-04-25 225209" src="https://user-images.githubusercontent.com/123450999/234306816-09767ed1-f0fe-4d10-b300-00a3aada992b.png">|<img width="1128" alt="スクリーンショット 2023-04-25 224810" src="https://user-images.githubusercontent.com/123450999/234305903-0531644a-a9c5-463f-9332-9e62bd197bdc.png"> |
 
 ## モバイル画面
-|  |  |
+| トップページ  | マイページ |
 | ------------- | ------------- |
-| | |
+|<img width="374" alt="スクリーンショット 2023-04-25 232826" src="https://user-images.githubusercontent.com/123450999/234309880-5a9b4ea6-a5f3-433b-95e8-8d02f547f809.png"> | <img width="376" alt="スクリーンショット 2023-04-25 232905" src="https://user-images.githubusercontent.com/123450999/234309957-22b3bd83-6828-43e6-8521-de7b1d5e0e2b.png">|
+
+
+| トレーニング一覧 | グラフ |
+| ------------- | ------------- |
+| <img width="386" alt="スクリーンショット 2023-04-25 232933" src="https://user-images.githubusercontent.com/123450999/234310003-1511232d-ccfc-4c87-b5f5-b2e4d755a370.png">|<img width="388" alt="スクリーンショット 2023-04-25 233000" src="https://user-images.githubusercontent.com/123450999/234310073-fdf7c4b9-9565-4000-a2a1-9a7627c5da2f.png">|
+
 
   
 ## 機能一覧
