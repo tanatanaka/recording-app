@@ -2,8 +2,8 @@ import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithRedirect,
   onAuthStateChanged,
+  signInWithPopup,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, provider } from "../../firebase";
@@ -67,7 +67,7 @@ const Auth = () => {
 
   const googleLogin = (e: any) => {
     e.preventDefault();
-    signInWithRedirect(auth, provider);
+    signInWithPopup(auth, provider);
   };
 
   const onChangeNewEmail = (e: ChangeEvent<HTMLInputElement>) => {
